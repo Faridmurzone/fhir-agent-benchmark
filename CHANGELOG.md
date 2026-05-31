@@ -25,6 +25,10 @@ IDs are immutable across versions.
 - Deterministic synthetic case generator (`generator/`) for MR-01, plus one
   generated example case `pf-fhir-agent-0900`.
 - CLI `score` and `generate` subcommands.
+- Baseline run harness: prompt rendering per input format, model adapters
+  (`oracle`, `empty` — credential-free; `anthropic` — gated by API key), a
+  runner (render → answer → parse → score → aggregate), and a markdown results
+  report. CLI `run` subcommand; results written to `results/` (gitignored).
 
 ### Decisions
 - **License:** MIT (single license for code and synthetic cases). Revisit before

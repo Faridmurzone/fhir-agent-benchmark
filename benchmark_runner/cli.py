@@ -72,6 +72,28 @@ def cmd_score(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_run(args: argparse.Namespace) -> int:
+    from .adapters import AnthropicAdapter, get_adapter
+    from .run import run_model, write_results
+
+    adapter = get_adapter(args.model)
+    if isinstance(adapter, AnthropicAdapter) and not adapter.available:
+        print("Adaptador Anthropic no disponible: falta ANTHROPIC_API_KEY o el SDK. "
+              "Probá --model oracle o --model empty.", file=sys.stderr)
+        return 1
+
+    results = run_model(adapter, args.cases_dir)
+    json_path, md_path = write_results(results, args.out)
+    agg = results["aggregate"]
+    print(f"Modelo: {results['model']} · {agg.get('n_cases', 0)} casos")
+    for dim in ("CC", "FV", "SF", "TRC", "SR"):
+        v = agg.get(dim)
+        print(f"  {dim:4} {'· n/a' if v is None else round(v):>4}")
+    print(f"  Overall {round(agg['overall']) if agg.get('overall') is not None else 'n/a'}")
+    print(f"Reporte: {md_path}")
+    return 0
+
+
 def cmd_generate(args: argparse.Namespace) -> int:
     from generator.emit_case import emit_case
 
@@ -100,6 +122,13 @@ def main(argv: list[str] | None = None) -> int:
     p_score.add_argument("submission", help="JSON con el/los output(s) del modelo")
     p_score.add_argument("--json", action="store_true", help="Imprime el scorecard completo en JSON")
     p_score.set_defaults(func=cmd_score)
+
+    p_run = sub.add_parser("run", help="Corre un modelo contra el benchmark y emite un reporte")
+    p_run.add_argument("--model", default="oracle",
+                       help="oracle | empty | anthropic[:<model>]")
+    p_run.add_argument("--cases-dir", default=None)
+    p_run.add_argument("--out", default=None, help="Carpeta de resultados (default: results/)")
+    p_run.set_defaults(func=cmd_run)
 
     p_gen = sub.add_parser("generate", help="Genera un caso sintético (MR-01)")
     p_gen.add_argument("--out", required=True, help="Carpeta destino del caso")

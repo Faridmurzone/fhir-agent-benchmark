@@ -7,9 +7,11 @@ robustness.
 
 > **Status:** early design phase (`v0.1`). In place and runnable: the taxonomy,
 > scoring methodology, JSON schemas, a multi-dimensional **scoring engine**, a
-> deterministic **synthetic case generator**, and **5 validated seed cases**
-> across Patient Understanding, Medication Reconciliation, and Data Quality
-> (including a safety-gate case). Contributions and discussion are welcome.
+> deterministic **synthetic case generator**, **5 validated seed cases** across
+> Patient Understanding, Medication Reconciliation, and Data Quality (including a
+> safety-gate case), and a **baseline run harness** (oracle / empty baselines run
+> without credentials; real model adapters gated by API key). Contributions and
+> discussion are welcome.
 
 Part of [**Prometheus Frontier**](https://github.com/) — building open,
 reproducible, vendor-neutral evaluation for healthcare AI.
@@ -78,9 +80,19 @@ python -m benchmark_runner.cli score cases/pf-fhir-agent-0001 submission.json
 # Generate a synthetic case (deterministic; same seed => identical case)
 python -m benchmark_runner.cli generate --out cases/pf-fhir-agent-0901 --seed 7
 
+# Run a baseline against all cases -> results/<model>.{json,md}
+python -m benchmark_runner.cli run --model oracle    # upper bound (copies ground truth)
+python -m benchmark_runner.cli run --model empty     # lower bound (answers nothing)
+python -m benchmark_runner.cli run --model anthropic # real Claude (needs ANTHROPIC_API_KEY)
+
 # Run the test suite
 pytest -q
 ```
+
+The `oracle` and `empty` baselines run with **no credentials** and prove the
+full loop (render → answer → parse → score → report). Real model adapters
+(`anthropic`) are gated by an API key. Results land in `results/` (gitignored,
+reproducible).
 
 A case validates only if its `task.json` / `ground_truth.json` / `scoring.json`
 pass their JSON Schemas **and** every evidence reference resolves to a resource
