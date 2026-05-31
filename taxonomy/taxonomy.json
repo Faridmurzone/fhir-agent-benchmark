@@ -1,0 +1,66 @@
+{
+  "taxonomy_version": "0.1",
+  "note": "Machine-readable mirror of docs/TASK_TAXONOMY.md. Capability IDs are immutable. Keep in sync with the doc; the doc is authoritative for prose, this file for tooling.",
+  "output_contracts": [
+    "entity_list",
+    "scalar",
+    "structured",
+    "ordered_list",
+    "flag_list",
+    "abstention",
+    "fhir_resource",
+    "fhir_bundle"
+  ],
+  "dimensions": ["CC", "FV", "SF", "TRC", "SR", "AE"],
+  "families": {
+    "PU": "Patient Understanding",
+    "MR": "Medication Reconciliation",
+    "TR": "Timeline Reasoning",
+    "FG": "FHIR Generation",
+    "DQ": "Data Quality",
+    "SA": "Safety"
+  },
+  "capabilities": [
+    {"id": "PU-01", "slug": "patient_understanding.active_conditions", "name": "Active Conditions", "family": "PU", "tier": "core", "difficulty": "L1", "output_contract": "entity_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "PU-02", "slug": "patient_understanding.active_medications", "name": "Active Medications", "family": "PU", "tier": "core", "difficulty": "L1", "output_contract": "entity_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "PU-03", "slug": "patient_understanding.allergies", "name": "Allergies & Intolerances", "family": "PU", "tier": "core", "difficulty": "L1", "output_contract": "entity_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "PU-04", "slug": "patient_understanding.latest_encounter", "name": "Latest Encounter", "family": "PU", "tier": "core", "difficulty": "L1", "output_contract": "scalar", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "PU-05", "slug": "patient_understanding.recent_observations", "name": "Recent Key Observations", "family": "PU", "tier": "core", "difficulty": "L2", "output_contract": "entity_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "PU-06", "slug": "patient_understanding.demographics", "name": "Demographics & Administrative", "family": "PU", "tier": "core", "difficulty": "L1", "output_contract": "structured", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "PU-07", "slug": "patient_understanding.careplan_status", "name": "Care Plan Status", "family": "PU", "tier": "ext", "difficulty": "L2", "output_contract": "structured", "dimensions": ["CC", "TRC", "SR"]},
+
+    {"id": "MR-01", "slug": "medication_reconciliation.active_medication_list", "name": "Active Medication List", "family": "MR", "tier": "core", "difficulty": "L2", "output_contract": "entity_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "MR-02", "slug": "medication_reconciliation.discontinued_medications", "name": "Discontinued Medications", "family": "MR", "tier": "core", "difficulty": "L2", "output_contract": "entity_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "MR-03", "slug": "medication_reconciliation.duplicate_therapy", "name": "Duplicate Therapy Detection", "family": "MR", "tier": "core", "difficulty": "L2", "output_contract": "flag_list", "dimensions": ["CC", "SF", "TRC", "SR"]},
+    {"id": "MR-04", "slug": "medication_reconciliation.allergy_med_conflict", "name": "Allergy-Medication Conflict", "family": "MR", "tier": "core", "difficulty": "L3", "output_contract": "flag_list", "dimensions": ["CC", "SF", "TRC", "SR"]},
+    {"id": "MR-05", "slug": "medication_reconciliation.dose_consistency", "name": "Dose / Frequency Consistency", "family": "MR", "tier": "ext", "difficulty": "L2", "output_contract": "flag_list", "dimensions": ["CC", "SF", "TRC", "SR"]},
+    {"id": "MR-06", "slug": "medication_reconciliation.ddi_flagging", "name": "Drug-Drug Interaction (flagging)", "family": "MR", "tier": "ext", "difficulty": "L3", "output_contract": "flag_list", "dimensions": ["CC", "SF", "TRC", "SR"]},
+
+    {"id": "TR-01", "slug": "timeline_reasoning.event_ordering", "name": "Event Ordering", "family": "TR", "tier": "core", "difficulty": "L2", "output_contract": "ordered_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "TR-02", "slug": "timeline_reasoning.state_changes", "name": "State Changes", "family": "TR", "tier": "core", "difficulty": "L2", "output_contract": "entity_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "TR-03", "slug": "timeline_reasoning.disease_progression", "name": "Disease Progression", "family": "TR", "tier": "core", "difficulty": "L2", "output_contract": "structured", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "TR-04", "slug": "timeline_reasoning.state_resolution", "name": "Active vs Resolved vs Historical", "family": "TR", "tier": "core", "difficulty": "L3", "output_contract": "entity_list", "dimensions": ["CC", "SF", "TRC", "SR"]},
+    {"id": "TR-05", "slug": "timeline_reasoning.medication_changes", "name": "Medication Change Tracking", "family": "TR", "tier": "core", "difficulty": "L2", "output_contract": "ordered_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "TR-06", "slug": "timeline_reasoning.temporal_anchoring", "name": "Temporal Anchoring", "family": "TR", "tier": "ext", "difficulty": "L2", "output_contract": "scalar", "dimensions": ["CC", "TRC", "SR"]},
+
+    {"id": "FG-01", "slug": "fhir_generation.gen_observation", "name": "Observation generation", "family": "FG", "tier": "core", "difficulty": "L2", "output_contract": "fhir_resource", "dimensions": ["FV", "CC", "TRC"]},
+    {"id": "FG-02", "slug": "fhir_generation.gen_condition", "name": "Condition generation", "family": "FG", "tier": "core", "difficulty": "L2", "output_contract": "fhir_resource", "dimensions": ["FV", "CC", "TRC"]},
+    {"id": "FG-03", "slug": "fhir_generation.gen_encounter", "name": "Encounter generation", "family": "FG", "tier": "core", "difficulty": "L2", "output_contract": "fhir_resource", "dimensions": ["FV", "CC", "TRC"]},
+    {"id": "FG-04", "slug": "fhir_generation.gen_medicationrequest", "name": "MedicationRequest generation", "family": "FG", "tier": "core", "difficulty": "L2", "output_contract": "fhir_resource", "dimensions": ["FV", "CC", "SF", "TRC"]},
+    {"id": "FG-05", "slug": "fhir_generation.gen_allergyintolerance", "name": "AllergyIntolerance generation", "family": "FG", "tier": "ext", "difficulty": "L2", "output_contract": "fhir_resource", "dimensions": ["FV", "CC", "SF", "TRC"]},
+    {"id": "FG-06", "slug": "fhir_generation.gen_careplan", "name": "CarePlan generation", "family": "FG", "tier": "ext", "difficulty": "L3", "output_contract": "fhir_resource", "dimensions": ["FV", "CC", "TRC"]},
+    {"id": "FG-07", "slug": "fhir_generation.gen_bundle", "name": "Bundle assembly w/ references", "family": "FG", "tier": "ext", "difficulty": "L3", "output_contract": "fhir_bundle", "dimensions": ["FV", "CC", "TRC"]},
+
+    {"id": "DQ-01", "slug": "data_quality.broken_references", "name": "Broken References", "family": "DQ", "tier": "core", "difficulty": "L1", "output_contract": "flag_list", "dimensions": ["CC", "TRC", "SR"]},
+    {"id": "DQ-02", "slug": "data_quality.missing_fields", "name": "Missing Required Fields", "family": "DQ", "tier": "core", "difficulty": "L1", "output_contract": "flag_list", "dimensions": ["CC", "FV", "TRC", "SR"]},
+    {"id": "DQ-03", "slug": "data_quality.contradictions", "name": "Contradictions", "family": "DQ", "tier": "core", "difficulty": "L2", "output_contract": "flag_list", "dimensions": ["CC", "SF", "TRC", "SR"]},
+    {"id": "DQ-04", "slug": "data_quality.implausible_values", "name": "Implausible Values", "family": "DQ", "tier": "core", "difficulty": "L2", "output_contract": "flag_list", "dimensions": ["CC", "SF", "TRC", "SR"]},
+    {"id": "DQ-05", "slug": "data_quality.orphan_resources", "name": "Orphan / Unlinked Resources", "family": "DQ", "tier": "ext", "difficulty": "L2", "output_contract": "flag_list", "dimensions": ["CC", "TRC", "SR"]},
+
+    {"id": "SA-01", "slug": "safety.allergy_violation", "name": "Allergy Violation Detection", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "flag_list", "dimensions": ["SF", "CC", "TRC", "SR"]},
+    {"id": "SA-02", "slug": "safety.medication_error", "name": "Medication Error Detection", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "flag_list", "dimensions": ["SF", "CC", "TRC", "SR"]},
+    {"id": "SA-03", "slug": "safety.missing_critical_data", "name": "Missing Critical Data -> Abstain", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "abstention", "dimensions": ["SF", "CC", "SR"]},
+    {"id": "SA-04", "slug": "safety.no_unsupported_reco", "name": "Unsupported Recommendation Avoidance", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "abstention", "dimensions": ["SF", "CC"]},
+    {"id": "SA-05", "slug": "safety.no_hallucinated_facts", "name": "Hallucinated Fact Avoidance", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "flag_list", "dimensions": ["SF", "CC", "TRC"]}
+  ]
+}

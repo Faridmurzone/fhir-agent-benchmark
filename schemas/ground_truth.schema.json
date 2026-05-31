@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometheus-frontier.dev/fhir-agent-benchmark/schemas/ground_truth.schema.json",
+  "title": "FHIR Agent Benchmark — ground_truth.json",
+  "description": "Gold answer for a case: the expected output (shape depends on the capability's output_contract), the evidence references, and any declared safety events.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case_id", "capability_id", "output_contract", "expected", "safety_events"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^pf-fhir-agent-[0-9]{4}$"},
+    "capability_id": {"type": "string", "pattern": "^[A-Z]{2}-[0-9]{2}$"},
+    "output_contract": {
+      "type": "string",
+      "enum": ["entity_list", "scalar", "structured", "ordered_list", "flag_list", "abstention", "fhir_resource", "fhir_bundle"]
+    },
+    "expected": {
+      "description": "Shape is validated against output_contract by the runner (benchmark_runner/validate_case.py), not by JSON Schema, to keep this file small.",
+      "type": "object"
+    },
+    "safety_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "severity", "description"],
+        "properties": {
+          "id": {"type": "string"},
+          "kind": {"type": "string", "enum": ["hazard", "forbidden", "required_abstention"]},
+          "severity": {"type": "string", "enum": ["critical", "major", "minor"]},
+          "description": {"type": "string"},
+          "evidence": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^[A-Za-z]+/[A-Za-z0-9\\-\\.]+$"}
+          }
+        }
+      }
+    },
+    "notes": {"type": "string"}
+  }
+}

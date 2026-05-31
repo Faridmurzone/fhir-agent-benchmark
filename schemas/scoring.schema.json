@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometheus-frontier.dev/fhir-agent-benchmark/schemas/scoring.schema.json",
+  "title": "FHIR Agent Benchmark — scoring.json",
+  "description": "Per-case scoring configuration: which dimensions apply, comparison options, and optional weight overrides. Defaults live in scoring/defaults.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case_id", "capability_id", "scoring_version", "dimensions"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^pf-fhir-agent-[0-9]{4}$"},
+    "capability_id": {"type": "string", "pattern": "^[A-Z]{2}-[0-9]{2}$"},
+    "scoring_version": {"type": "string"},
+    "dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "enum": ["CC", "FV", "SF", "TRC", "SR", "AE"]}
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label_fallback": {"type": "boolean", "default": false},
+        "date_granularity": {"type": "string", "enum": ["year", "month", "day", "instant"], "default": "day"},
+        "code_systems_priority": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "weights_override": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CC": {"type": "number", "minimum": 0},
+        "FV": {"type": "number", "minimum": 0},
+        "TRC": {"type": "number", "minimum": 0},
+        "SR": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

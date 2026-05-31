@@ -1,0 +1,25 @@
+{
+  "scoring_version": "0.1",
+  "note": "Global scoring parameters. See docs/SCORING.md. A result can be re-scored under a different policy by swapping this file and recording the scoring_version.",
+  "weights": {
+    "CC": 0.45,
+    "FV": 0.20,
+    "TRC": 0.20,
+    "SR": 0.15
+  },
+  "safety_gate": {
+    "gamma": 1.0,
+    "critical_uncaught_overall_cap": 40
+  },
+  "safety_penalties": {
+    "critical": 60,
+    "major": 25,
+    "minor": 10
+  },
+  "false_alarm_penalties": {
+    "critical": 10,
+    "major": 10,
+    "minor": 3
+  },
+  "scale": {"min": 0, "max": 100}
+}

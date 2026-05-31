@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometheus-frontier.dev/fhir-agent-benchmark/schemas/task.schema.json",
+  "title": "FHIR Agent Benchmark — task.json",
+  "description": "Defines a single benchmark task instance: which capability it targets, the instruction, the input renderings available, and the expected output contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case_id", "schema_version", "taxonomy_version", "capability", "language", "instruction", "output_contract", "available_renderings", "resource_types"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^pf-fhir-agent-[0-9]{4}$"},
+    "schema_version": {"type": "string"},
+    "taxonomy_version": {"type": "string"},
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slug"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Z]{2}-[0-9]{2}$"},
+        "slug": {"type": "string"}
+      }
+    },
+    "language": {"type": "string", "enum": ["en"]},
+    "scenario": {"type": "string"},
+    "instruction": {"type": "string", "minLength": 10},
+    "output_contract": {
+      "type": "string",
+      "enum": ["entity_list", "scalar", "structured", "ordered_list", "flag_list", "abstention", "fhir_resource", "fhir_bundle"]
+    },
+    "available_renderings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "enum": ["fhir_json", "narrative", "timeline", "table"]}
+    },
+    "rendering_files": {
+      "type": "object",
+      "description": "Maps each rendering to its file within the case directory.",
+      "additionalProperties": {"type": "string"}
+    },
+    "resource_types": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"}
+    },
+    "tags": {"type": "array", "items": {"type": "string"}}
+  }
+}
