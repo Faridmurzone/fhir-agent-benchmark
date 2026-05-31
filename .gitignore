@@ -10,4 +10,9 @@ venv/
 results/
 *.local.json
 
+# Secrets / API keys
+.env
+.env.*
+!.env.example
+
 .DS_Store
