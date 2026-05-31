@@ -1,0 +1,10 @@
+{
+  "case_id": "pf-fhir-agent-0008",
+  "capability_id": "DQ-01",
+  "scoring_version": "0.1",
+  "dimensions": ["CC", "TRC", "SR"],
+  "options": {
+    "label_fallback": false,
+    "date_granularity": "day"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "resourceType": "Bundle",
+  "id": "pf-fhir-agent-0002-bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "Patient/pat-002",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-002",
+        "gender": "male",
+        "birthDate": "1971-02-23",
+        "name": [{"use": "official", "family": "Synthetic", "given": ["James"]}]
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-copd",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-copd",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "13645005", "display": "Chronic obstructive pulmonary disease"}], "text": "Chronic obstructive pulmonary disease"},
+        "subject": {"reference": "Patient/pat-002"},
+        "onsetDateTime": "2020-08-15",
+        "recordedDate": "2025-09-02"
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-gerd",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-gerd",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "235595009", "display": "Gastroesophageal reflux disease"}], "text": "Gastroesophageal reflux disease"},
+        "subject": {"reference": "Patient/pat-002"},
+        "onsetDateTime": "2022-04-10",
+        "recordedDate": "2025-09-02"
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-pneumonia",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-pneumonia",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "resolved"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "encounter-diagnosis"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "233604007", "display": "Pneumonia"}], "text": "Community-acquired pneumonia"},
+        "subject": {"reference": "Patient/pat-002"},
+        "onsetDateTime": "2024-11-12",
+        "abatementDateTime": "2024-12-05",
+        "recordedDate": "2024-11-12"
+      }
+    },
+    {
+      "fullUrl": "Observation/obs-spo2",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-spo2",
+        "status": "final",
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "vital-signs"}]}],
+        "code": {"coding": [{"system": "http://loinc.org", "code": "2708-6", "display": "Oxygen saturation in Arterial blood"}], "text": "Oxygen saturation"},
+        "subject": {"reference": "Patient/pat-002"},
+        "effectiveDateTime": "2026-05-18",
+        "encounter": {"reference": "Encounter/enc-011"},
+        "valueQuantity": {"value": 94, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%"}
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-010",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-010",
+        "status": "finished",
+        "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "IMP", "display": "inpatient encounter"},
+        "type": [{"text": "Inpatient admission for pneumonia"}],
+        "subject": {"reference": "Patient/pat-002"},
+        "period": {"start": "2024-11-12", "end": "2024-11-18"}
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-011",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-011",
+        "status": "finished",
+        "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory"},
+        "type": [{"text": "Pulmonary follow-up"}],
+        "subject": {"reference": "Patient/pat-002"},
+        "period": {"start": "2026-05-18", "end": "2026-05-18"}
+      }
+    }
+  ]
+}

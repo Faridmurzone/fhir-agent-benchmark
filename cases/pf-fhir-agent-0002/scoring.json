@@ -1,0 +1,11 @@
+{
+  "case_id": "pf-fhir-agent-0002",
+  "capability_id": "PU-01",
+  "scoring_version": "0.1",
+  "dimensions": ["CC", "TRC", "SR"],
+  "options": {
+    "label_fallback": false,
+    "date_granularity": "day",
+    "code_systems_priority": ["http://snomed.info/sct"]
+  }
+}

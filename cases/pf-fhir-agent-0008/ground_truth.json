@@ -1,0 +1,17 @@
+{
+  "case_id": "pf-fhir-agent-0008",
+  "capability_id": "DQ-01",
+  "output_contract": "flag_list",
+  "expected": {
+    "flags": [
+      {
+        "type": "broken_reference",
+        "severity": "minor",
+        "description": "Observation/obs-egfr (eGFR) has subject reference 'Patient/pat-999', which does not resolve to any resource in the bundle. The actual patient is Patient/pat-008.",
+        "evidence": ["Observation/obs-egfr"]
+      }
+    ]
+  },
+  "safety_events": [],
+  "notes": "Referential-integrity case. Exactly one dangling reference: Observation/obs-egfr.subject points to Patient/pat-999, which is absent from the bundle (the real patient is Patient/pat-008). Evidence cites the SOURCE resource that holds the bad pointer (Observation/obs-egfr), which exists in the bundle; the missing target Patient/pat-999 is named in the description but must NOT appear in evidence, since it does not resolve. All other references (subject and encounter on the remaining resources) resolve cleanly and must not be flagged. CC dimensions only; no safety hazard."
+}

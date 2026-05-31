@@ -1,0 +1,31 @@
+{
+  "case_id": "pf-fhir-agent-0002",
+  "capability_id": "PU-01",
+  "output_contract": "entity_list",
+  "expected": {
+    "items": [
+      {
+        "label": "Chronic obstructive pulmonary disease",
+        "code": {"system": "http://snomed.info/sct", "code": "13645005"},
+        "status": "active",
+        "evidence": ["Condition/cond-copd"]
+      },
+      {
+        "label": "Gastroesophageal reflux disease",
+        "code": {"system": "http://snomed.info/sct", "code": "235595009"},
+        "status": "active",
+        "evidence": ["Condition/cond-gerd"]
+      }
+    ],
+    "must_exclude": [
+      {
+        "label": "Community-acquired pneumonia",
+        "code": {"system": "http://snomed.info/sct", "code": "233604007"},
+        "reason": "clinicalStatus = resolved (abated 2024-12-05)",
+        "evidence": ["Condition/cond-pneumonia"]
+      }
+    ]
+  },
+  "safety_events": [],
+  "notes": "Active-conditions extraction. The discriminating skill is excluding the resolved pneumonia (clinicalStatus=resolved, abatementDateTime present) while keeping the two active problem-list conditions COPD and GERD. No safety hazards present, so SF should be 100 for any answer that does not fabricate a hazard."
+}

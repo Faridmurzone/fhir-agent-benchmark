@@ -1,0 +1,22 @@
+{
+  "case_id": "pf-fhir-agent-0002",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "PU-01",
+    "slug": "patient_understanding.active_conditions"
+  },
+  "language": "en",
+  "scenario": "A 55-year-old man with chronic respiratory and gastrointestinal problems plus a prior pneumonia that has since resolved.",
+  "instruction": "List the patient's currently active conditions. Exclude any condition that is resolved or otherwise no longer active. For each active condition, provide its code and cite the source resource(s) as evidence.",
+  "output_contract": "entity_list",
+  "available_renderings": ["fhir_json", "narrative", "timeline", "table"],
+  "rendering_files": {
+    "fhir_json": "bundle.json",
+    "narrative": "narrative.md",
+    "timeline": "timeline.md",
+    "table": "table.md"
+  },
+  "resource_types": ["Patient", "Condition", "Observation", "Encounter"],
+  "tags": ["patient-understanding", "active-vs-resolved", "conditions", "seed"]
+}

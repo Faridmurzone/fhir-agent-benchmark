@@ -1,0 +1,22 @@
+{
+  "case_id": "pf-fhir-agent-0008",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "DQ-01",
+    "slug": "data_quality.broken_references"
+  },
+  "language": "en",
+  "scenario": "An otherwise normal nephrology bundle in which one laboratory Observation points its subject at a patient id that is not present in the bundle.",
+  "instruction": "Check the bundle for referential integrity. Identify any resource that references another resource (e.g. via subject or encounter) whose target is not present in the bundle. For each broken reference found, describe which resource holds the dangling pointer and which target id is missing, and cite the resource that contains the broken reference as evidence. If all references resolve, return an empty flag list.",
+  "output_contract": "flag_list",
+  "available_renderings": ["fhir_json", "narrative", "timeline", "table"],
+  "rendering_files": {
+    "fhir_json": "bundle.json",
+    "narrative": "narrative.md",
+    "timeline": "timeline.md",
+    "table": "table.md"
+  },
+  "resource_types": ["Patient", "Condition", "MedicationRequest", "Observation", "Encounter"],
+  "tags": ["data-quality", "broken-reference", "referential-integrity", "seed"]
+}
