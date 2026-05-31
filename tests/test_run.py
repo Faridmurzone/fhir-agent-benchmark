@@ -59,6 +59,20 @@ def test_report_renders():
 
 # --- Parser de JSON del modelo ---
 
+def test_adapter_routing():
+    import pytest
+
+    from benchmark_runner.adapters import (AnthropicAdapter, GeminiAdapter,
+                                           OpenAIAdapter, get_adapter)
+    assert isinstance(get_adapter("openai:gpt-4o"), OpenAIAdapter)
+    assert get_adapter("openai:gpt-4o").model == "gpt-4o"
+    assert isinstance(get_adapter("gemini"), GeminiAdapter)
+    assert isinstance(get_adapter("anthropic:claude-sonnet-4-6"), AnthropicAdapter)
+    assert get_adapter("anthropic:claude-sonnet-4-6").model == "claude-sonnet-4-6"
+    with pytest.raises(ValueError):
+        get_adapter("nope")
+
+
 def test_parse_model_json_with_fences():
     assert parse_model_json('```json\n{"items": []}\n```') == {"items": []}
     assert parse_model_json('Sure!\n{"flags": [{"type": "x"}]}\ndone') == {"flags": [{"type": "x"}]}

@@ -90,7 +90,9 @@ python -m benchmark_runner.cli generate --out cases/pf-fhir-agent-0901 --seed 7
 # Run a baseline against all cases -> results/<model>.{json,md}
 python -m benchmark_runner.cli run --model oracle    # upper bound (copies ground truth)
 python -m benchmark_runner.cli run --model empty     # lower bound (answers nothing)
-python -m benchmark_runner.cli run --model anthropic # real Claude (needs ANTHROPIC_API_KEY)
+python -m benchmark_runner.cli run --model anthropic:claude-opus-4-8  # needs ANTHROPIC_API_KEY
+python -m benchmark_runner.cli run --model openai:gpt-4o              # needs OPENAI_API_KEY
+python -m benchmark_runner.cli run --model gemini:gemini-2.5-flash    # needs GOOGLE_API_KEY
 
 # Run the test suite
 pytest -q

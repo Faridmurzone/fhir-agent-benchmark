@@ -133,12 +133,86 @@ class AnthropicAdapter:
         return parse_model_json(text)
 
 
+class OpenAIAdapter:
+    """Adaptador para OpenAI (GPT). Gated por OPENAI_API_KEY."""
+
+    def __init__(self, model: str | None = None):
+        self.model = model or os.getenv("OPENAI_MODEL", "gpt-4o")
+        self.name = f"openai:{self.model}"
+        self._client = None
+        key = os.getenv("OPENAI_API_KEY")
+        if key:
+            try:
+                from openai import OpenAI
+
+                self._client = OpenAI(api_key=key)
+            except Exception:
+                self._client = None
+
+    @property
+    def available(self) -> bool:
+        return self._client is not None
+
+    def answer(self, case: Case, rendering: str, prompt: str) -> dict:
+        if not self.available:
+            raise RuntimeError("OpenAIAdapter no disponible (falta OPENAI_API_KEY o SDK)")
+        from .prompts import system_prompt
+
+        resp = self._client.chat.completions.create(  # type: ignore[union-attr]
+            model=self.model,
+            max_tokens=1500,
+            messages=[
+                {"role": "system", "content": system_prompt()},
+                {"role": "user", "content": prompt},
+            ],
+        )
+        return parse_model_json(resp.choices[0].message.content or "")
+
+
+class GeminiAdapter:
+    """Adaptador para Google Gemini. Gated por GOOGLE_API_KEY."""
+
+    def __init__(self, model: str | None = None):
+        self.model = model or os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.name = f"gemini:{self.model}"
+        self._client = None
+        key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+        if key:
+            try:
+                from google import genai
+
+                self._client = genai.Client(api_key=key)
+            except Exception:
+                self._client = None
+
+    @property
+    def available(self) -> bool:
+        return self._client is not None
+
+    def answer(self, case: Case, rendering: str, prompt: str) -> dict:
+        if not self.available:
+            raise RuntimeError("GeminiAdapter no disponible (falta GOOGLE_API_KEY o SDK)")
+        from google.genai import types
+
+        from .prompts import system_prompt
+
+        resp = self._client.models.generate_content(  # type: ignore[union-attr]
+            model=self.model,
+            contents=prompt,
+            config=types.GenerateContentConfig(system_instruction=system_prompt()),
+        )
+        return parse_model_json(resp.text or "")
+
+
 def get_adapter(name: str) -> Adapter:
     if name == "empty":
         return EmptyAdapter()
     if name == "oracle":
         return OracleAdapter()
     if name.startswith("anthropic"):
-        model = name.split(":", 1)[1] if ":" in name else None
-        return AnthropicAdapter(model)
+        return AnthropicAdapter(name.split(":", 1)[1] if ":" in name else None)
+    if name.startswith("openai"):
+        return OpenAIAdapter(name.split(":", 1)[1] if ":" in name else None)
+    if name.startswith("gemini"):
+        return GeminiAdapter(name.split(":", 1)[1] if ":" in name else None)
     raise ValueError(f"adaptador desconocido: {name}")

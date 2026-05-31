@@ -73,12 +73,12 @@ def cmd_score(args: argparse.Namespace) -> int:
 
 
 def cmd_run(args: argparse.Namespace) -> int:
-    from .adapters import AnthropicAdapter, get_adapter
+    from .adapters import get_adapter
     from .run import run_model, write_results
 
     adapter = get_adapter(args.model)
-    if isinstance(adapter, AnthropicAdapter) and not adapter.available:
-        print("Adaptador Anthropic no disponible: falta ANTHROPIC_API_KEY o el SDK. "
+    if not getattr(adapter, "available", True):
+        print(f"Adaptador '{args.model}' no disponible: falta la API key o el SDK. "
               "Probá --model oracle o --model empty.", file=sys.stderr)
         return 1
 

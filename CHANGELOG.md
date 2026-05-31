@@ -29,6 +29,10 @@ IDs are immutable across versions.
   (`oracle`, `empty` — credential-free; `anthropic` — gated by API key), a
   runner (render → answer → parse → score → aggregate), and a markdown results
   report. CLI `run` subcommand; results written to `results/` (gitignored).
+- Vendor-neutral model adapters: `anthropic` (Claude), `openai` (GPT), `gemini`
+  (Google) — all gated by their API key. Selectable as `--model <vendor>:<model>`.
+- Stability & versioning policy documented in the README (pre-release; results
+  only against tagged versions).
 
 ### Decisions
 - **License:** MIT (single license for code and synthetic cases). Revisit before
