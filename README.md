@@ -13,8 +13,8 @@ robustness.
 > without credentials; real model adapters gated by API key). Contributions and
 > discussion are welcome.
 
-Part of [**Prometheus Frontier**](https://github.com/) — building open,
-reproducible, vendor-neutral evaluation for healthcare AI.
+Part of **Prometheus Frontier** — building open, reproducible, vendor-neutral
+evaluation for healthcare AI.
 
 ---
 
@@ -63,8 +63,11 @@ Overall Score ...............  83
 
 ## Quickstart
 
+Requires **Python 3.10+**.
+
 ```bash
-git clone <repo-url> && cd fhir-agent-benchmark
+git clone https://github.com/Faridmurzone/fhir-agent-benchmark.git
+cd fhir-agent-benchmark
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
@@ -98,6 +101,44 @@ A case validates only if its `task.json` / `ground_truth.json` / `scoring.json`
 pass their JSON Schemas **and** every evidence reference resolves to a resource
 in the FHIR bundle **and** the capability/contract/dimensions match the
 taxonomy.
+
+---
+
+## Evaluate your own model
+
+Two ways:
+
+**1. Plug in an adapter** (run end-to-end). Implement the small `Adapter`
+protocol in [`benchmark_runner/adapters.py`](benchmark_runner/adapters.py) — a
+single method `answer(case, rendering, prompt) -> dict` — register it in
+`get_adapter`, then `run --model <name>`. The included `anthropic` adapter is a
+worked example.
+
+**2. Score offline outputs** (bring a JSON file). Produce your model's answers
+and score them:
+
+```bash
+python -m benchmark_runner.cli score cases/pf-fhir-agent-0001 my_output.json
+```
+
+The submission JSON matches the case's **output contract**. For an `entity_list`
+case (e.g. an active-medication list):
+
+```json
+{"items": [
+  {"label": "Metformin 500 mg",
+   "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "860975"},
+   "status": "active",
+   "evidence": ["MedicationRequest/mr-metformin"]}
+]}
+```
+
+Other contracts: `flag_list` → `{"flags": [...]}`, `scalar` →
+`{"value": ..., "evidence": [...]}`, `abstention` →
+`{"abstained": true, "reason": "...", "missing": [...]}`. To score per input
+rendering (and get a Serialization Robustness score), pass an object keyed by
+rendering name: `{"fhir_json": {...}, "narrative": {...}}`. See
+[`docs/SCORING.md`](docs/SCORING.md) for how each dimension is computed.
 
 ---
 
@@ -137,6 +178,20 @@ fhir-agent-benchmark/
 - **Success criterion:** a third party can reproduce the results from scratch.
 
 All cases are **synthetic** — no PHI, no real patient data.
+
+## Limitations (v0.1)
+
+Honest scope so results aren't over-read:
+
+- **Single-turn only.** Live API / tool-use agents (multi-step execution) are
+  out of scope for v0.1 — the agentic-execution dimension is specified but unused.
+- **Structural FHIR validity.** The validity check is structural (resource type,
+  required fields, reference shape); full profile validation (e.g. US Core) is a
+  later layer.
+- **English only**, and the seed set is small — coverage grows toward the 100-case
+  v0.1 milestone.
+- **LLM-as-judge** is bounded to free-text rationale and never overrides a
+  deterministic verdict (see `docs/SCORING.md`).
 
 ## Contributing
 
