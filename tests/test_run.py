@@ -59,6 +59,25 @@ def test_report_renders():
 
 # --- Parser de JSON del modelo ---
 
+class _FailingAdapter:
+    name = "failing"
+
+    def answer(self, case, rendering, prompt):
+        raise RuntimeError("simulated API error")
+
+
+def test_run_handles_adapter_errors():
+    # Un adaptador que siempre falla no debe tumbar la corrida.
+    res = run_model(_FailingAdapter())
+    assert res["n_errored"] == res["aggregate"]["n_cases"] + res["n_errored"]  # todos errored
+    assert res["n_scored"] == 0
+    assert res["aggregate"]["overall"] is None
+    assert all(c.get("error") for c in res["cases"])
+    # El reporte se renderiza igual.
+    md = build_report(res)
+    assert "errored" in md and "ERR" in md
+
+
 def test_adapter_routing():
     import pytest
 

@@ -90,6 +90,8 @@ def cmd_run(args: argparse.Namespace) -> int:
         v = agg.get(dim)
         print(f"  {dim:4} {'· n/a' if v is None else round(v):>4}")
     print(f"  Overall {round(agg['overall']) if agg.get('overall') is not None else 'n/a'}")
+    if results.get("n_errored"):
+        print(f"  ⚠️ {results['n_errored']} caso(s) con error (excluidos del score)")
     print(f"Reporte: {md_path}")
     return 0
 
