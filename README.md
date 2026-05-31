@@ -12,6 +12,10 @@ robustness.
 > safety-gate case), and a **baseline run harness** (oracle / empty baselines run
 > without credentials; real model adapters gated by API key). Contributions and
 > discussion are welcome.
+>
+> ⚠️ **Pre-release.** The spec (taxonomy, scoring, schemas, cases) may change
+> until the first tagged release `v0.1.0`. No official results are published yet
+> — see [Stability & versioning](#stability--versioning).
 
 Part of **Prometheus Frontier** — building open, reproducible, vendor-neutral
 evaluation for healthcare AI.
@@ -192,6 +196,27 @@ Honest scope so results aren't over-read:
   v0.1 milestone.
 - **LLM-as-judge** is bounded to free-text rationale and never overrides a
   deterministic verdict (see `docs/SCORING.md`).
+
+## Stability & versioning
+
+A benchmark is only useful if results are comparable over time, so evolution is
+explicit and disciplined:
+
+- **Pre-release status.** Until the first tagged release `v0.1.0`, the spec
+  (taxonomy, scoring, schemas, seed cases) is a **draft and may change**. Treat
+  contracts as unstable and pin to a commit if you build on them now.
+- **Capability IDs are immutable.** `PU-01` always means the same capability;
+  IDs are appended, never renumbered or reused — so historical results stay
+  interpretable.
+- **Every result is versioned.** Results carry a `taxonomy_version` and a
+  `scoring_version` (see [`CHANGELOG.md`](CHANGELOG.md)); cross-version
+  comparisons always state both.
+- **Official results only against tags.** No leaderboard or official model
+  results are published until the spec is frozen at a tagged release. Results are
+  always tied to a specific tag — never to a moving `main`.
+
+In short: the **design** is public (and evolving with community feedback); the
+**numbers** wait until the spec is frozen.
 
 ## Contributing
 
