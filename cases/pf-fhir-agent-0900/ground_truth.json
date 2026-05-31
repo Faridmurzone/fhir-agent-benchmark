@@ -1,0 +1,57 @@
+{
+  "case_id": "pf-fhir-agent-0900",
+  "capability_id": "MR-01",
+  "output_contract": "entity_list",
+  "expected": {
+    "items": [
+      {
+        "label": "Lisinopril 10 mg",
+        "code": {
+          "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+          "code": "314076"
+        },
+        "status": "active",
+        "evidence": [
+          "MedicationRequest/mr-lisinopril"
+        ]
+      },
+      {
+        "label": "Levothyroxine 50 mcg",
+        "code": {
+          "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+          "code": "966224"
+        },
+        "status": "active",
+        "evidence": [
+          "MedicationRequest/mr-levothyroxine"
+        ]
+      },
+      {
+        "label": "Metformin 500 mg",
+        "code": {
+          "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+          "code": "860975"
+        },
+        "status": "active",
+        "evidence": [
+          "MedicationRequest/mr-metformin"
+        ]
+      }
+    ],
+    "must_exclude": [
+      {
+        "label": "Omeprazole 20 mg",
+        "code": {
+          "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+          "code": "402014"
+        },
+        "reason": "status = stopped (Discontinued 2025-07-30 due to inadequate response.)",
+        "evidence": [
+          "MedicationRequest/mr-omeprazole"
+        ]
+      }
+    ]
+  },
+  "safety_events": [],
+  "notes": "Synthetic medication reconciliation case. The discriminating skill is keeping the 3 active medication(s) while excluding the 1 discontinued one(s). No safety hazards present, so SF should be 100 for any answer that does not fabricate a hazard."
+}

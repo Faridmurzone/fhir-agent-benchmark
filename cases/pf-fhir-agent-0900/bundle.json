@@ -1,0 +1,533 @@
+{
+  "resourceType": "Bundle",
+  "id": "pf-fhir-agent-0900-bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "Patient/pat-001",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-001",
+        "gender": "male",
+        "birthDate": "1979-12-09",
+        "name": [
+          {
+            "use": "official",
+            "family": "Synthetic",
+            "given": [
+              "Aisha"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-hypertension",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-hypertension",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "59621000",
+              "display": "Essential hypertension"
+            }
+          ],
+          "text": "Essential hypertension"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "onsetDateTime": "2014-07-02",
+        "recordedDate": "2025-01-22"
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-hypothyroidism",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-hypothyroidism",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "40930008",
+              "display": "Hypothyroidism"
+            }
+          ],
+          "text": "Hypothyroidism"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "onsetDateTime": "2023-02-07",
+        "recordedDate": "2025-01-22"
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-diabetes",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-diabetes",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Type 2 diabetes mellitus"
+            }
+          ],
+          "text": "Type 2 diabetes mellitus"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "onsetDateTime": "2020-09-20",
+        "recordedDate": "2025-01-22"
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-gerd",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-gerd",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "235595009",
+              "display": "Gastroesophageal reflux disease"
+            }
+          ],
+          "text": "Gastroesophageal reflux disease"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "onsetDateTime": "2023-09-07",
+        "recordedDate": "2025-01-22"
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-lisinopril",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-lisinopril",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "314076",
+              "display": "Lisinopril 10 MG Oral Tablet"
+            }
+          ],
+          "text": "Lisinopril 10 mg"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "authoredOn": "2025-01-22",
+        "encounter": {
+          "reference": "Encounter/enc-001"
+        },
+        "dosageInstruction": [
+          {
+            "text": "10 mg orally once daily"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-levothyroxine",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-levothyroxine",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "966224",
+              "display": "Levothyroxine sodium 0.05 MG Oral Tablet"
+            }
+          ],
+          "text": "Levothyroxine 50 mcg"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "authoredOn": "2025-07-30",
+        "encounter": {
+          "reference": "Encounter/enc-002"
+        },
+        "dosageInstruction": [
+          {
+            "text": "50 mcg orally once daily in the morning"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-metformin",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-metformin",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "860975",
+              "display": "Metformin hydrochloride 500 MG Oral Tablet"
+            }
+          ],
+          "text": "Metformin 500 mg"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "authoredOn": "2025-01-22",
+        "encounter": {
+          "reference": "Encounter/enc-001"
+        },
+        "dosageInstruction": [
+          {
+            "text": "500 mg orally twice daily"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-omeprazole",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-omeprazole",
+        "status": "stopped",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "402014",
+              "display": "Omeprazole 20 MG Delayed Release Oral Capsule"
+            }
+          ],
+          "text": "Omeprazole 20 mg"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "authoredOn": "2025-01-22",
+        "encounter": {
+          "reference": "Encounter/enc-001"
+        },
+        "dosageInstruction": [
+          {
+            "text": "20 mg orally once daily before breakfast"
+          }
+        ],
+        "note": [
+          {
+            "text": "Discontinued 2025-07-30 due to inadequate response."
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "Observation/obs-hba1c",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-hba1c",
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "4548-4",
+              "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+            }
+          ],
+          "text": "HbA1c"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "effectiveDateTime": "2025-12-08",
+        "encounter": {
+          "reference": "Encounter/enc-003"
+        },
+        "valueQuantity": {
+          "value": 8.3,
+          "unit": "%",
+          "system": "http://unitsofmeasure.org",
+          "code": "%"
+        }
+      }
+    },
+    {
+      "fullUrl": "Observation/obs-bp",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-bp",
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "vital-signs"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "85354-9",
+              "display": "Blood pressure panel"
+            }
+          ],
+          "text": "Blood pressure"
+        },
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "effectiveDateTime": "2025-12-08",
+        "encounter": {
+          "reference": "Encounter/enc-003"
+        },
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "8480-6",
+                  "display": "Systolic blood pressure"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "value": 152,
+              "unit": "mmHg",
+              "system": "http://unitsofmeasure.org",
+              "code": "mm[Hg]"
+            }
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "8462-4",
+                  "display": "Diastolic blood pressure"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "value": 85,
+              "unit": "mmHg",
+              "system": "http://unitsofmeasure.org",
+              "code": "mm[Hg]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-001",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-001",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Initial outpatient evaluation"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "period": {
+          "start": "2025-01-22",
+          "end": "2025-01-22"
+        }
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-002",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-002",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Medication review follow-up"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "period": {
+          "start": "2025-07-30",
+          "end": "2025-07-30"
+        }
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-003",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-003",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Routine follow-up"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pat-001"
+        },
+        "period": {
+          "start": "2025-12-08",
+          "end": "2025-12-08"
+        }
+      }
+    }
+  ]
+}
