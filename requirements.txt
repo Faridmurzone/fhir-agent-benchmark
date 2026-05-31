@@ -1,0 +1,5 @@
+# Runner / validación
+jsonschema>=4.20
+
+# Dev / test
+pytest>=8.0
