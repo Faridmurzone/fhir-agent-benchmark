@@ -1,120 +1,133 @@
 # FHIR Agent Benchmark
 
-A benchmark for evaluating AI agents on real-world healthcare interoperability and clinical reasoning tasks using FHIR resources.
+An open benchmark for evaluating AI agents on **FHIR-native healthcare
+workflows** — structured clinical reasoning, medication reconciliation, resource
+generation, data-quality detection, safety evaluation, and serialization
+robustness.
+
+> **Status:** early design phase (`v0.1`). The taxonomy, scoring methodology,
+> JSON schemas, and a first runnable seed case are in place. Contributions and
+> discussion are welcome.
+
+Part of [**Prometheus Frontier**](https://github.com/) — building open,
+reproducible, vendor-neutral evaluation for healthcare AI.
+
+---
 
 ## Why
 
-Most existing LLM benchmarks focus on:
+Most existing LLM benchmarks focus on general reasoning, coding, mathematics, or
+question answering. Healthcare introduces a different class of challenges:
+structured clinical data, longitudinal patient histories, temporal reasoning,
+medical safety constraints, and interoperability standards.
 
-- General reasoning
-- Coding
-- Mathematics
-- Question answering
+There is no equivalent of SWE-Bench, MMLU, or HumanEval for **healthcare
+interoperability and FHIR-native agents**. This project aims to fill that gap.
 
-Healthcare systems introduce a different class of challenges:
+FHIR Agent Benchmark is **not** a medical QA benchmark, a diagnosis benchmark, a
+text-to-FHIR-only benchmark, or a generic agent benchmark. It is FHIR-native,
+agent-oriented, safety-aware, traceability-focused, and serialization-aware.
 
-- Structured clinical data
-- Longitudinal patient histories
-- Temporal reasoning
-- Medical safety constraints
-- Interoperability standards
+## What it measures
 
-FHIR Agent Benchmark aims to evaluate how well AI agents can operate on healthcare data represented using the HL7 FHIR standard.
+Six task families, ~30 concrete capabilities (see [`docs/TASK_TAXONOMY.md`](docs/TASK_TAXONOMY.md)):
 
-## Vision
+| Family | Examples |
+|--------|----------|
+| **Patient Understanding** | active conditions, active medications, allergies, latest encounter |
+| **Medication Reconciliation** | active list, duplicate therapy, allergy–medication conflict |
+| **Timeline Reasoning** | event ordering, state changes, active vs resolved |
+| **FHIR Generation** | Observation, Condition, Encounter, MedicationRequest |
+| **Data Quality** | broken references, missing fields, contradictions, implausible values |
+| **Safety** | allergy violations, medication errors, safe abstention on missing data |
 
-We believe future healthcare AI systems will not simply answer questions.
+Models are scored on a **multi-dimensional scorecard** — never a single accuracy
+number — where **Safety acts as a gate** on the overall score (see
+[`docs/SCORING.md`](docs/SCORING.md)):
 
-They will:
+```
+Clinical Correctness ........  91
+FHIR Validity ...............  98
+Safety ......................  72   ⚠ gate
+Traceability ................  89
+Serialization Robustness ....  65
+────────────────────────────────
+Overall Score ...............  83
+```
 
-- Navigate patient histories
-- Interpret clinical records
-- Generate structured resources
-- Detect inconsistencies
-- Coordinate workflows
-- Interact with healthcare systems through APIs
+---
 
-Current benchmarks do not adequately measure these capabilities.
+## Quickstart
 
-FHIR Agent Benchmark aims to fill that gap.
+```bash
+git clone <repo-url> && cd fhir-agent-benchmark
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
 
-## Evaluation Domains
+# Validate every benchmark case (schemas + FHIR reference integrity + taxonomy)
+python -m benchmark_runner.cli validate-all
 
-### Patient Understanding
+# Validate a single case
+python -m benchmark_runner.cli validate cases/pf-fhir-agent-0001
 
-Can an agent correctly understand a patient record?
+# Run the test suite
+pytest -q
+```
 
-Examples:
+A case validates only if its `task.json` / `ground_truth.json` / `scoring.json`
+pass their JSON Schemas **and** every evidence reference resolves to a resource
+in the FHIR bundle **and** the capability/contract/dimensions match the
+taxonomy.
 
-- Demographics
-- Allergies
-- Conditions
-- Medications
+---
 
-### Longitudinal Reasoning
+## Repository layout
 
-Can an agent reason across multiple encounters?
+```text
+fhir-agent-benchmark/
+├── README.md · VISION.md · ROADMAP.md   # what & why
+├── docs/
+│   ├── CONCEPTUAL_DESIGN.md             # design + research background / prior work
+│   ├── TASK_TAXONOMY.md                 # the 6 families and ~30 capabilities (IDs)
+│   ├── SCORING.md                       # multi-dimensional scoring + safety gate
+│   └── PUBLISHING.md                    # how this repo is split out & published
+├── taxonomy/taxonomy.json               # machine-readable taxonomy (tooling)
+├── schemas/                             # JSON Schemas for task / ground_truth / scoring
+├── scoring/defaults.json                # weights, safety penalties, gate params
+├── cases/
+│   └── pf-fhir-agent-0001/              # seed case: bundle + 4 renderings + task/gt/scoring
+└── benchmark_runner/                    # load + validate (scoring engine: next)
+```
 
-Examples:
+## Documents
 
-- Disease progression
-- Medication history
-- Timeline reconstruction
+- [`VISION.md`](VISION.md) — problem, opportunity, principles, north star.
+- [`ROADMAP.md`](ROADMAP.md) — phases 0–5 and the v0.1 milestone.
+- [`docs/CONCEPTUAL_DESIGN.md`](docs/CONCEPTUAL_DESIGN.md) — design and prior work.
+- [`docs/TASK_TAXONOMY.md`](docs/TASK_TAXONOMY.md) — what the benchmark measures.
+- [`docs/SCORING.md`](docs/SCORING.md) — how it is scored.
 
-### Clinical Safety
+---
 
-Can an agent avoid unsafe conclusions?
+## First milestone — v0.1
 
-Examples:
+- 100 synthetic cases · 5 task families · 7 core FHIR resources · 4 input renderings
+- 3 baseline models · a reproducible results report · a public Hugging Face dataset
+- **Success criterion:** a third party can reproduce the results from scratch.
 
-- Allergy conflicts
-- Medication contradictions
-- Missing information
+All cases are **synthetic** — no PHI, no real patient data.
 
-### FHIR Generation
+## Contributing
 
-Can an agent generate valid FHIR resources?
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). The fastest way to help right now is to
+propose or review benchmark cases: each one is a folder under `cases/` that must
+pass `validate-all`.
 
-Examples:
+## Citation
 
-- Observation
-- Condition
-- Encounter
-- CarePlan
+If you use this benchmark, please cite it — see [`CITATION.cff`](CITATION.cff).
 
-### Data Quality
+## License
 
-Can an agent detect inconsistencies?
-
-Examples:
-
-- Missing references
-- Invalid relationships
-- Conflicting information
-
-## Benchmark Structure
-
-Each task contains:
-
-- Clinical scenario
-- FHIR resources
-- Ground truth
-- Evaluation criteria
-
-## Initial Target Models
-
-- GPT
-- Claude
-- Gemini
-- DeepSeek
-- Open-weight models
-
-## Long-Term Goal
-
-Become the reference benchmark for evaluating AI agents operating on healthcare data and FHIR ecosystems.
-
-## Status
-
-Early design phase.
-
-Contributions and discussion are welcome.
+[MIT](LICENSE). All benchmark cases are synthetic and freely reusable under the
+same terms.

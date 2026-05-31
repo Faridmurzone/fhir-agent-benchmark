@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: FHIR Agent Benchmark
+message: "If you use this benchmark, please cite it as below."
+type: dataset
+authors:
+  - family-names: Murzone
+    given-names: Farid
+abstract: >-
+  An open benchmark for evaluating AI agents on FHIR-native healthcare
+  workflows, including structured clinical reasoning, medication reconciliation,
+  FHIR resource generation, data-quality detection, safety evaluation, and
+  serialization robustness.
+keywords:
+  - FHIR
+  - HL7
+  - healthcare AI
+  - LLM agents
+  - benchmark
+  - evaluation
+  - clinical reasoning
+  - interoperability
+version: "0.1"
+license: MIT
