@@ -17,6 +17,14 @@ IDs are immutable across versions.
 - Machine-readable taxonomy (`taxonomy/taxonomy.json`).
 - First seed case `pf-fhir-agent-0001` (MR-01) with 4 input renderings.
 - `benchmark_runner`: case loading, schema validation, and consistency checks.
+- Scoring engine: `metrics.py` (set F1, scalar, ordered, structured primitives)
+  and `score_case.py` (CC, TRC, SF, SR, lightweight FV; per-rendering →
+  per-case → per-model aggregation; safety gate + hard cap).
+- 3 more seed cases: `pf-fhir-agent-0002` (PU-01), `0004` (MR-04, exercises the
+  safety gate with a critical allergy–medication conflict), `0008` (DQ-01).
+- Deterministic synthetic case generator (`generator/`) for MR-01, plus one
+  generated example case `pf-fhir-agent-0900`.
+- CLI `score` and `generate` subcommands.
 
 ### Decisions
 - **License:** MIT (single license for code and synthetic cases). Revisit before

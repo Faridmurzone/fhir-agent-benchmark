@@ -5,9 +5,11 @@ workflows** — structured clinical reasoning, medication reconciliation, resour
 generation, data-quality detection, safety evaluation, and serialization
 robustness.
 
-> **Status:** early design phase (`v0.1`). The taxonomy, scoring methodology,
-> JSON schemas, and a first runnable seed case are in place. Contributions and
-> discussion are welcome.
+> **Status:** early design phase (`v0.1`). In place and runnable: the taxonomy,
+> scoring methodology, JSON schemas, a multi-dimensional **scoring engine**, a
+> deterministic **synthetic case generator**, and **5 validated seed cases**
+> across Patient Understanding, Medication Reconciliation, and Data Quality
+> (including a safety-gate case). Contributions and discussion are welcome.
 
 Part of [**Prometheus Frontier**](https://github.com/) — building open,
 reproducible, vendor-neutral evaluation for healthcare AI.
@@ -70,6 +72,12 @@ python -m benchmark_runner.cli validate-all
 # Validate a single case
 python -m benchmark_runner.cli validate cases/pf-fhir-agent-0001
 
+# Score a model submission against a case (multi-dimensional scorecard)
+python -m benchmark_runner.cli score cases/pf-fhir-agent-0001 submission.json
+
+# Generate a synthetic case (deterministic; same seed => identical case)
+python -m benchmark_runner.cli generate --out cases/pf-fhir-agent-0901 --seed 7
+
 # Run the test suite
 pytest -q
 ```
@@ -94,9 +102,10 @@ fhir-agent-benchmark/
 ├── taxonomy/taxonomy.json               # machine-readable taxonomy (tooling)
 ├── schemas/                             # JSON Schemas for task / ground_truth / scoring
 ├── scoring/defaults.json                # weights, safety penalties, gate params
-├── cases/
-│   └── pf-fhir-agent-0001/              # seed case: bundle + 4 renderings + task/gt/scoring
-└── benchmark_runner/                    # load + validate (scoring engine: next)
+├── cases/                               # seed cases (0001/0002/0004/0008) + generated (0900)
+│   └── pf-fhir-agent-0001/              # bundle + 4 renderings + task/gt/scoring
+├── generator/                           # deterministic synthetic case generator
+└── benchmark_runner/                    # load, validate, score (metrics + score_case)
 ```
 
 ## Documents
