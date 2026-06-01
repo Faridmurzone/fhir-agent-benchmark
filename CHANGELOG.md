@@ -34,6 +34,14 @@ IDs are immutable across versions.
 - Stability & versioning policy documented in the README (pre-release; results
   only against tagged versions).
 
+### Changed
+- **Matching semantics (scoring).** Surfaced by a sanity run: code-only entity
+  matching unfairly scored narrative/timeline renderings at 0 (they carry no
+  codes), and exact flag-`type` string matching zeroed correct hazard flags.
+  Now: entities match on **code OR evidence reference OR normalized label**
+  (renderings comparable); flags match on **evidence overlap** (not the free-text
+  type). `docs/SCORING.md` updated accordingly.
+
 ### Decisions
 - **License:** MIT (single license for code and synthetic cases). Revisit before
   v0.1 release if a dual code/data license (e.g. CC-BY-4.0 for cases) is preferred.

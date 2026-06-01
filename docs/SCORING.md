@@ -64,25 +64,38 @@ Capability outputs use a small set of output contracts (see
 |-----------------|-----------|-------|
 | `scalar` | exact match (normalized) | dates compared at declared granularity; codes compared on `system`+`code` |
 | `structured` | per-field exact match, averaged | each field weighted equally unless `scoring.json` overrides |
-| `entity_list` | **set F1** on coded identity | match on code; label is secondary. See below |
-| `flag_list` | **set F1** on `(type, evidence)` identity | empty-vs-empty = perfect; severity affects Safety, not CC |
+| `entity_list` | **set F1** on entity match (code OR evidence OR label) | renderings differ in what they expose; see below |
+| `flag_list` | **set F1** on evidence overlap | flag the right resources; type string and severity are not part of CC |
 | `ordered_list` | order-aware score | Kendall-τ-style: fraction of correctly ordered pairs |
 | `abstention` | match on `abstained` + reason adequacy | reason scored semantically; see [Abstention](#abstention-and-refusal) |
 | `fhir_resource` / `fhir_bundle` | structural validity + field-level CC | see [FHIR Validity](#fv--fhir-validity) |
 
 ### Set scoring (entity / flag lists)
 
-For a predicted set `P` and gold set `G`, matched on coded identity:
+For a predicted set `P` and gold set `G`, greedily matched 1-to-1 by a match
+predicate:
 
 ```
-precision = |P ∩ G| / |P|
-recall    = |P ∩ G| / |G|
+precision = |matched| / |P|
+recall    = |matched| / |G|
 F1        = 2·P·R / (P + R)
 CC(case)  = 100 · F1
 ```
 
-- An entity matches if its code matches (same `system`+`code`); an uncoded entity
-  may match by normalized label only when `scoring.json` allows `label_fallback`.
+- **Entity match (entity_list):** a predicted entity matches a gold entity if
+  **any** of these coincide — the code (`system`+`code`), an evidence reference
+  (same FHIR resource cited), or the normalized label. This is deliberate: the
+  same clinical fact is exposed differently across renderings (FHIR JSON and the
+  table carry codes; the narrative and timeline do not), so requiring a code
+  match would unfairly score narrative/timeline at 0 even when the model
+  correctly identifies the entity and cites the right resource. Matching on
+  code-or-evidence-or-label makes renderings comparable and rewards real
+  understanding.
+- **Flag match (flag_list):** a predicted flag matches a gold flag if they share
+  at least one **evidence reference** (they point at the same resource(s)). The
+  free-text `type` string is **not** required to match — models will not guess a
+  fixed type vocabulary verbatim; what matters is flagging the right resources.
+  Severity is scored under Safety, not CC.
 - **Empty gold set:** if `G = ∅`, then a predicted `P = ∅` scores 100 and any
   non-empty `P` scores 0 (precision 0). This correctly rewards "nothing to flag."
 

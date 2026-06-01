@@ -80,13 +80,14 @@ def score_cc(ground_truth: dict, scoring_cfg: dict, model_output: dict) -> metri
 
     if contract == "entity_list":
         return metrics.set_f1(
-            out.get("items", []), expected.get("items", []), label_fallback=label_fallback
+            out.get("items", []), expected.get("items", []),
+            match_fn=metrics.entities_match,
         )
 
     if contract == "flag_list":
         return metrics.set_f1(
-            out.get("flags", []), expected.get("flags", []), label_fallback=label_fallback,
-            identity_fn=lambda f: _flag_identity(f, label_fallback),
+            out.get("flags", []), expected.get("flags", []),
+            match_fn=metrics.flags_match,
         )
 
     if contract == "scalar":
@@ -161,18 +162,15 @@ def score_trc(ground_truth: dict, scoring_cfg: dict, model_output: dict) -> metr
 
     if contract in ("entity_list", "flag_list"):
         key = "items" if contract == "entity_list" else "flags"
-        ident = (
-            (lambda e: metrics.entity_identity(e, label_fallback))
-            if contract == "entity_list"
-            else (lambda f: _flag_identity(f, label_fallback))
-        )
+        match_fn = metrics.entities_match if contract == "entity_list" else metrics.flags_match
         pairs = metrics.matched_gold_elements(
-            out.get(key, []), expected.get(key, []), label_fallback=label_fallback, identity_fn=ident
+            out.get(key, []), expected.get(key, []), match_fn=match_fn
         )
         for gold_el, pred_el in pairs:
             res = metrics.evidence_f1(pred_el.get("evidence", []), gold_el.get("evidence", []))
             element_scores.append(res.score)
-            per_element.append({"identity": _safe_ident(ident(gold_el)), **res.detail, "score": res.score})
+            per_element.append({"label": gold_el.get("label") or gold_el.get("type"),
+                                **res.detail, "score": res.score})
 
     elif contract in ("scalar", "structured", "fhir_resource", "fhir_bundle"):
         # Un único elemento con evidencia a nivel de output; se acredita solo si

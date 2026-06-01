@@ -102,6 +102,40 @@ def entity_identity(entity: dict, label_fallback: bool = False) -> Any:
     return ("unmatchable", id(entity))
 
 
+def _evidence_set(entity: dict) -> set[str]:
+    return {str(r).strip() for r in (entity.get("evidence") or []) if str(r).strip()}
+
+
+def entities_match(pred: dict, gold: dict) -> bool:
+    """Predicado de match para entidades clínicas (entity_list).
+
+    Dos entidades refieren al mismo hecho clínico si coincide CUALQUIERA de:
+      - el código (system+code),
+      - alguna referencia de evidencia (mismo recurso FHIR citado),
+      - la etiqueta normalizada.
+    Esto vuelve comparables los renderings que no exponen códigos (narrativa,
+    timeline) con los que sí (FHIR JSON, tabla). Ver docs/SCORING.md.
+    """
+    pk, gk = _code_key(pred.get("code")), _code_key(gold.get("code"))
+    if pk is not None and pk == gk:
+        return True
+    if _evidence_set(pred) & _evidence_set(gold):
+        return True
+    pl, gl = normalize_label(pred.get("label")), normalize_label(gold.get("label"))
+    return bool(pl) and pl == gl
+
+
+def flags_match(pred: dict, gold: dict) -> bool:
+    """Predicado de match para flags (flag_list).
+
+    Un flag matchea el gold si comparten al menos una referencia de evidencia
+    (marcaron el/los mismo(s) recurso(s)). No se exige que el `type` en texto
+    libre coincida: lo importante es señalar los recursos correctos. La
+    severidad se evalúa en la dimensión de Safety, no acá.
+    """
+    return bool(_evidence_set(pred) & _evidence_set(gold))
+
+
 # --------------------------------------------------------------------------- #
 # Set F1 (entity_list / flag_list)
 # --------------------------------------------------------------------------- #
@@ -112,13 +146,15 @@ def set_f1(
     *,
     label_fallback: bool = False,
     identity_fn=None,
+    match_fn=None,
 ) -> MetricResult:
-    """F1 de conjuntos sobre identidad codificada.
+    """F1 de conjuntos.
 
     - ``predicted`` / ``gold`` son listas de entidades (dicts con ``code`` y/o
       ``label``, opcionalmente ``evidence``).
-    - El matcheo es por identidad codificada (system+code); con
-      ``label_fallback`` también por etiqueta normalizada.
+    - Si se pasa ``match_fn(pred, gold) -> bool`` se usa matcheo por predicado
+      (greedy, 1-a-1); si no, por identidad codificada (system+code) con
+      ``label_fallback`` opcional.
     - Regla del gold vacío: gold ∅ y predicho ∅ -> 100; gold ∅ y predicho no
       vacío -> 0.
 
@@ -127,20 +163,26 @@ def set_f1(
     pred = list(predicted or [])
     gld = list(gold or [])
 
-    ident = identity_fn or (lambda e: entity_identity(e, label_fallback))
-
-    # Multiconjuntos de identidades.
-    pred_ids = [ident(e) for e in pred]
-    gold_ids = [ident(e) for e in gld]
-    gold_pool = list(gold_ids)
-
-    matched_ids: list[Any] = []
-    for pid in pred_ids:
-        if pid in gold_pool:
-            gold_pool.remove(pid)
-            matched_ids.append(pid)
-
-    tp = len(matched_ids)
+    if match_fn is not None:
+        used = [False] * len(gld)
+        tp = 0
+        for p in pred:
+            for i, g in enumerate(gld):
+                if not used[i] and match_fn(p, g):
+                    used[i] = True
+                    tp += 1
+                    break
+        matched_ids = [f"match_{i}" for i in range(tp)]  # placeholder para detalle
+    else:
+        ident = identity_fn or (lambda e: entity_identity(e, label_fallback))
+        pred_ids = [ident(e) for e in pred]
+        gold_pool = [ident(e) for e in gld]
+        matched_ids = []
+        for pid in pred_ids:
+            if pid in gold_pool:
+                gold_pool.remove(pid)
+                matched_ids.append(pid)
+        tp = len(matched_ids)
 
     # Regla del gold vacío.
     if not gld:
@@ -182,22 +224,34 @@ def matched_gold_elements(
     *,
     label_fallback: bool = False,
     identity_fn=None,
+    match_fn=None,
 ) -> list[tuple[dict, dict]]:
-    """Empareja elementos gold con su predicho correspondiente (por identidad).
+    """Empareja elementos gold con su predicho correspondiente.
 
-    Devuelve la lista de pares (gold_element, predicted_element) cuyo answer
-    es correcto. Usado por TRC: la evidencia solo se acredita en elementos
-    cuya respuesta también es correcta.
+    Con ``match_fn`` usa matcheo por predicado (greedy); si no, por identidad.
+    Devuelve pares (gold_element, predicted_element) cuyo answer es correcto.
+    Usado por TRC: la evidencia solo se acredita en elementos correctos.
     """
     pred = list(predicted or [])
     gld = list(gold or [])
-    ident = identity_fn or (lambda e: entity_identity(e, label_fallback))
 
+    if match_fn is not None:
+        used = [False] * len(pred)
+        pairs: list[tuple[dict, dict]] = []
+        for g in gld:
+            for i, p in enumerate(pred):
+                if not used[i] and match_fn(p, g):
+                    used[i] = True
+                    pairs.append((g, p))
+                    break
+        return pairs
+
+    ident = identity_fn or (lambda e: entity_identity(e, label_fallback))
     pred_by_id: dict[Any, list[dict]] = {}
     for e in pred:
         pred_by_id.setdefault(ident(e), []).append(e)
 
-    pairs: list[tuple[dict, dict]] = []
+    pairs = []
     for g in gld:
         gid = ident(g)
         bucket = pred_by_id.get(gid)
