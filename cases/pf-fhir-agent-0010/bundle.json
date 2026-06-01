@@ -1,0 +1,155 @@
+{
+  "resourceType": "Bundle",
+  "id": "pf-fhir-agent-0010-bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "Patient/pat-010",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-010",
+        "gender": "male",
+        "birthDate": "1962-04-22",
+        "name": [{"use": "official", "family": "Synthetic", "given": ["Robert"]}]
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-htn",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-htn",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "59621000", "display": "Essential hypertension"}], "text": "Essential hypertension"},
+        "subject": {"reference": "Patient/pat-010"},
+        "onsetDateTime": "2015-08-12",
+        "recordedDate": "2025-09-01"
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-amlodipine",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-amlodipine",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "197361", "display": "Amlodipine 5 MG Oral Tablet"}], "text": "Amlodipine 5 mg"},
+        "subject": {"reference": "Patient/pat-010"},
+        "authoredOn": "2025-09-01",
+        "encounter": {"reference": "Encounter/enc-001"},
+        "dosageInstruction": [{"text": "5 mg orally once daily"}]
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-metoprolol",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-metoprolol",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "866412", "display": "Metoprolol tartrate 50 MG Oral Tablet"}], "text": "Metoprolol 50 mg"},
+        "subject": {"reference": "Patient/pat-010"},
+        "authoredOn": "2025-09-01",
+        "encounter": {"reference": "Encounter/enc-001"},
+        "dosageInstruction": [{"text": "50 mg orally twice daily"}]
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-amoxicillin",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-amoxicillin",
+        "status": "completed",
+        "intent": "order",
+        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "308182", "display": "Amoxicillin 500 MG Oral Capsule"}], "text": "Amoxicillin 500 mg"},
+        "subject": {"reference": "Patient/pat-010"},
+        "authoredOn": "2026-01-15",
+        "encounter": {"reference": "Encounter/enc-002"},
+        "dosageInstruction": [{"text": "500 mg orally three times daily for 7 days"}],
+        "note": [{"text": "Course completed 2026-01-22 for acute sinusitis."}]
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-prednisone",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-prednisone",
+        "status": "on-hold",
+        "intent": "order",
+        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "312615", "display": "Prednisone 20 MG Oral Tablet"}], "text": "Prednisone 20 mg"},
+        "subject": {"reference": "Patient/pat-010"},
+        "authoredOn": "2026-02-10",
+        "encounter": {"reference": "Encounter/enc-003"},
+        "dosageInstruction": [{"text": "20 mg orally once daily"}],
+        "note": [{"text": "Temporarily suspended 2026-03-01 pending infection work-up; not currently being taken."}]
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-omeprazole",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-omeprazole",
+        "status": "entered-in-error",
+        "intent": "order",
+        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "402014", "display": "Omeprazole 20 MG Delayed Release Oral Capsule"}], "text": "Omeprazole 20 mg"},
+        "subject": {"reference": "Patient/pat-010"},
+        "authoredOn": "2026-02-10",
+        "encounter": {"reference": "Encounter/enc-003"},
+        "dosageInstruction": [{"text": "20 mg orally once daily"}],
+        "note": [{"text": "Ordered by mistake on the wrong patient chart; voided as entered-in-error."}]
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-warfarin",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-warfarin",
+        "status": "stopped",
+        "intent": "order",
+        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "855332", "display": "Warfarin sodium 5 MG Oral Tablet"}], "text": "Warfarin 5 mg"},
+        "subject": {"reference": "Patient/pat-010"},
+        "authoredOn": "2025-09-01",
+        "encounter": {"reference": "Encounter/enc-001"},
+        "dosageInstruction": [{"text": "5 mg orally once daily"}],
+        "note": [{"text": "Discontinued 2026-01-15; anticoagulation no longer indicated."}]
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-001",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-001",
+        "status": "finished",
+        "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory"},
+        "type": [{"text": "Initial cardiology evaluation"}],
+        "subject": {"reference": "Patient/pat-010"},
+        "period": {"start": "2025-09-01", "end": "2025-09-01"}
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-002",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-002",
+        "status": "finished",
+        "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory"},
+        "type": [{"text": "Acute sinusitis visit"}],
+        "subject": {"reference": "Patient/pat-010"},
+        "period": {"start": "2026-01-15", "end": "2026-01-15"}
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-003",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-003",
+        "status": "finished",
+        "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory"},
+        "type": [{"text": "Follow-up visit"}],
+        "subject": {"reference": "Patient/pat-010"},
+        "period": {"start": "2026-02-10", "end": "2026-02-10"}
+      }
+    }
+  ]
+}

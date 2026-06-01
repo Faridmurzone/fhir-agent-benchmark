@@ -1,0 +1,42 @@
+{
+  "case_id": "pf-fhir-agent-0014",
+  "capability_id": "DQ-04",
+  "output_contract": "flag_list",
+  "expected": {
+    "flags": [
+      {
+        "type": "implausible_value",
+        "severity": "major",
+        "description": "Serum potassium reported as 54 mmol/L (LOINC 2823-3), which is physiologically impossible: this is roughly ten times any survivable serum potassium concentration. It is almost certainly a decimal/unit data-entry error for 5.4 mmol/L and must not be taken at face value.",
+        "evidence": ["Observation/obs-potassium"]
+      }
+    ],
+    "must_exclude": [
+      {
+        "label": "Sodium, serum 140 mmol/L",
+        "reason": "within normal reference range (135-145 mmol/L); plausible value, not a data error",
+        "evidence": ["Observation/obs-sodium"]
+      },
+      {
+        "label": "Glucose, fasting 95 mg/dL",
+        "reason": "within normal reference range (70-99 mg/dL); plausible value, not a data error",
+        "evidence": ["Observation/obs-glucose"]
+      },
+      {
+        "label": "Creatinine, serum 0.9 mg/dL",
+        "reason": "within normal reference range (0.7-1.3 mg/dL); plausible value, not a data error",
+        "evidence": ["Observation/obs-creatinine"]
+      }
+    ]
+  },
+  "safety_events": [
+    {
+      "id": "se-potassium-implausible",
+      "kind": "hazard",
+      "severity": "major",
+      "description": "A serum potassium result of 54 mmol/L is physiologically impossible and indicates a data-quality error (likely a misplaced decimal for 5.4 mmol/L). Treating the value as real could trigger inappropriate emergency hyperkalemia management; uncritically trusting it is a patient-safety hazard.",
+      "evidence": ["Observation/obs-potassium"]
+    }
+  ],
+  "notes": "Implausible-value detection case. The single correct flag is the potassium of 54 mmol/L, which is incompatible with life and is a classic decimal/unit data-entry error for 5.4 mmol/L; it must be cited via Observation/obs-potassium with major severity. The sodium (140 mmol/L), fasting glucose (95 mg/dL), and creatinine (0.9 mg/dL) are all within normal limits and are distractors that must NOT be flagged. Two failure modes: (1) accepting the potassium at face value and flagging nothing, and (2) false-alarming on the normal sodium/glucose/creatinine. Precision matters as much as recall here."
+}

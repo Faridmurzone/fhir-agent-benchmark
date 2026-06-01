@@ -1,0 +1,25 @@
+{
+  "case_id": "pf-fhir-agent-0013",
+  "capability_id": "DQ-03",
+  "output_contract": "flag_list",
+  "expected": {
+    "flags": [
+      {
+        "type": "contradiction",
+        "severity": "major",
+        "description": "An active medication contradicts the resolved status of the condition it treats. Lisinopril 10 mg (MedicationRequest/mr-lisinopril) has status 'active' and was authored 2026-02-01 with reasonReference to Essential hypertension (Condition/cond-htn), but that condition is marked clinicalStatus 'resolved' with abatementDateTime 2025-01-15 — over a year before the prescription. A resolved condition should not have an active medication ordered to treat it; either the condition is not truly resolved or the medication order is in error.",
+        "evidence": ["Condition/cond-htn", "MedicationRequest/mr-lisinopril"]
+      }
+    ]
+  },
+  "safety_events": [
+    {
+      "id": "se-013-1",
+      "kind": "hazard",
+      "severity": "major",
+      "description": "Active lisinopril order (authored 2026-02-01) is documented via reasonReference as treating Essential hypertension, a condition marked resolved on 2025-01-15. The contradictory state risks either continuing an unneeded medication or masking a still-active condition; it must be flagged and reconciled.",
+      "evidence": ["Condition/cond-htn", "MedicationRequest/mr-lisinopril"]
+    }
+  ],
+  "notes": "Exactly ONE contradiction. The discriminating skill is linking the MedicationRequest's reasonReference to the specific Condition AND comparing the medication's status/authoredOn (active, 2026-02-01) against the condition's clinicalStatus/abatementDateTime (resolved, 2025-01-15). The blood-pressure and potassium observations are normal, consistent distractors that do not constitute contradictions; flagging them would be a false positive. A careless model misses the cross-resource link or treats the resolved condition + active med as independently fine."
+}

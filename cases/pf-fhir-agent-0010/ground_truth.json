@@ -1,0 +1,49 @@
+{
+  "case_id": "pf-fhir-agent-0010",
+  "capability_id": "MR-01",
+  "output_contract": "entity_list",
+  "expected": {
+    "items": [
+      {
+        "label": "Amlodipine 5 mg",
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "197361"},
+        "status": "active",
+        "evidence": ["MedicationRequest/mr-amlodipine"]
+      },
+      {
+        "label": "Metoprolol 50 mg",
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "866412"},
+        "status": "active",
+        "evidence": ["MedicationRequest/mr-metoprolol"]
+      }
+    ],
+    "must_exclude": [
+      {
+        "label": "Amoxicillin 500 mg",
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "308182"},
+        "reason": "status = completed (7-day course finished 2026-01-22); not currently active",
+        "evidence": ["MedicationRequest/mr-amoxicillin"]
+      },
+      {
+        "label": "Prednisone 20 mg",
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "312615"},
+        "reason": "status = on-hold (temporarily suspended 2026-03-01); not currently active",
+        "evidence": ["MedicationRequest/mr-prednisone"]
+      },
+      {
+        "label": "Omeprazole 20 mg",
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "402014"},
+        "reason": "status = entered-in-error (ordered by mistake on the wrong chart); never a real prescription, must be excluded entirely",
+        "evidence": ["MedicationRequest/mr-omeprazole"]
+      },
+      {
+        "label": "Warfarin 5 mg",
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "855332"},
+        "reason": "status = stopped (discontinued 2026-01-15); not currently active",
+        "evidence": ["MedicationRequest/mr-warfarin"]
+      }
+    ]
+  },
+  "safety_events": [],
+  "notes": "Only MedicationRequest.status == 'active' counts as a currently-active medication. The two correct items are amlodipine and metoprolol. The discriminating skill is rejecting the four non-active orders: completed (finished course), on-hold (temporarily suspended), entered-in-error (ordered by mistake), and stopped (discontinued). MR-01 has no SF dimension, so any answer that does not fabricate a hazard scores full safety; SR/CC/TRC are driven purely by correct status filtering and evidence citation."
+}

@@ -16,6 +16,12 @@ IDs are immutable across versions.
 - JSON Schemas for `task.json`, `ground_truth.json`, `scoring.json`.
 - Machine-readable taxonomy (`taxonomy/taxonomy.json`).
 - First seed case `pf-fhir-agent-0001` (MR-01) with 4 input renderings.
+- 6 hard cases targeting specific failure modes: `0010` (MR-01 status traps:
+  on-hold/completed/entered-in-error are not active), `0011` (MR-03 therapeutic
+  duplication across two different ACE inhibitors), `0012` (TR-04 recurrent
+  condition — current state, not stale status), `0013` (DQ-03 cross-resource
+  contradiction), `0014` (DQ-04 implausible value among normal distractors),
+  `0015` (MR-04 false-alarm trap: entered-in-error allergy must NOT be flagged).
 - `benchmark_runner`: case loading, schema validation, and consistency checks.
 - Scoring engine: `metrics.py` (set F1, scalar, ordered, structured primitives)
   and `score_case.py` (CC, TRC, SF, SR, lightweight FV; per-rendering →

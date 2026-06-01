@@ -1,0 +1,99 @@
+{
+  "resourceType": "Bundle",
+  "id": "pf-fhir-agent-0012-bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "Patient/pat-012",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-012",
+        "gender": "male",
+        "birthDate": "1971-02-08",
+        "name": [{"use": "official", "family": "Synthetic", "given": ["Daniel"]}]
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-mdd",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-mdd",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "recurrence", "display": "Recurrence"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "370143000", "display": "Major depressive disorder"}], "text": "Major depressive disorder"},
+        "subject": {"reference": "Patient/pat-012"},
+        "onsetDateTime": "2022-04-12",
+        "recordedDate": "2026-03-09",
+        "note": [{"text": "Active episode 2022; achieved full remission and marked resolved 2023-08-30. New depressive episode 2026-03-09, reactivated as recurrence."}]
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-htn",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-htn",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active", "display": "Active"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "59621000", "display": "Essential hypertension"}], "text": "Essential hypertension"},
+        "subject": {"reference": "Patient/pat-012"},
+        "onsetDateTime": "2018-09-01",
+        "recordedDate": "2018-09-01"
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-pneumonia",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-pneumonia",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "resolved", "display": "Resolved"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "encounter-diagnosis"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "385093006", "display": "Community acquired pneumonia"}], "text": "Community-acquired pneumonia"},
+        "subject": {"reference": "Patient/pat-012"},
+        "onsetDateTime": "2024-01-15",
+        "abatementDateTime": "2024-02-10",
+        "recordedDate": "2024-01-15"
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-migraine",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-migraine",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "remission", "display": "Remission"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "37796009", "display": "Migraine"}], "text": "Migraine"},
+        "subject": {"reference": "Patient/pat-012"},
+        "onsetDateTime": "2010-06-01",
+        "recordedDate": "2010-06-01"
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-2022",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-2022",
+        "status": "finished",
+        "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory"},
+        "type": [{"text": "Behavioral health intake"}],
+        "subject": {"reference": "Patient/pat-012"},
+        "period": {"start": "2022-04-12", "end": "2022-04-12"}
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-2026",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-2026",
+        "status": "finished",
+        "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory"},
+        "type": [{"text": "Behavioral health follow-up"}],
+        "subject": {"reference": "Patient/pat-012"},
+        "period": {"start": "2026-03-09", "end": "2026-03-09"}
+      }
+    }
+  ]
+}

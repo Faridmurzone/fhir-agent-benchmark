@@ -1,0 +1,22 @@
+{
+  "case_id": "pf-fhir-agent-0013",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "DQ-03",
+    "slug": "data_quality.contradictions"
+  },
+  "language": "en",
+  "scenario": "A 60-year-old woman whose hypertension is marked resolved, yet an active medication ordered later is documented as treating that same resolved condition.",
+  "instruction": "Review this record for internal contradictions or inconsistencies — facts that cannot all be true at once. For each contradiction you find, return a flag with a type, a severity, a description explaining the inconsistency, and the FHIR references that together establish the contradiction as evidence. If there are no contradictions, return an empty flag list. Do not fabricate problems that the data does not support.",
+  "output_contract": "flag_list",
+  "available_renderings": ["fhir_json", "narrative", "timeline", "table"],
+  "rendering_files": {
+    "fhir_json": "bundle.json",
+    "narrative": "narrative.md",
+    "timeline": "timeline.md",
+    "table": "table.md"
+  },
+  "resource_types": ["Patient", "Condition", "MedicationRequest", "Encounter", "Observation"],
+  "tags": ["data-quality", "contradiction", "resolved-condition", "active-medication", "reason-reference", "hard"]
+}

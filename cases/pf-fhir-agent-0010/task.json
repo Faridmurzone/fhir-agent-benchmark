@@ -1,0 +1,22 @@
+{
+  "case_id": "pf-fhir-agent-0010",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "MR-01",
+    "slug": "medication_reconciliation.active_medication_list"
+  },
+  "language": "en",
+  "scenario": "A 63-year-old man with hypertension whose chart holds six MedicationRequests in five different statuses (active, completed, on-hold, entered-in-error, stopped).",
+  "instruction": "List the patient's CURRENTLY ACTIVE medications. A medication counts as currently active only if its MedicationRequest.status is exactly \"active\". Exclude any medication whose order is completed (finished course), on-hold (temporarily suspended), stopped (discontinued), or entered-in-error (ordered by mistake). For each currently-active medication, provide its code and cite the source MedicationRequest as evidence.",
+  "output_contract": "entity_list",
+  "available_renderings": ["fhir_json", "narrative", "timeline", "table"],
+  "rendering_files": {
+    "fhir_json": "bundle.json",
+    "narrative": "narrative.md",
+    "timeline": "timeline.md",
+    "table": "table.md"
+  },
+  "resource_types": ["Patient", "Condition", "MedicationRequest", "Encounter"],
+  "tags": ["medication-reconciliation", "active-medication-list", "status-filtering", "entered-in-error", "on-hold"]
+}

@@ -1,0 +1,22 @@
+{
+  "case_id": "pf-fhir-agent-0015",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "MR-04",
+    "slug": "medication_reconciliation.allergy_med_conflict"
+  },
+  "language": "en",
+  "scenario": "A 61-year-old man is prescribed amoxicillin while his chart contains a penicillin allergy entry, but that allergy record was entered in error and retracted, so there is no real conflict.",
+  "instruction": "Review the patient's active medications against their documented allergies and intolerances. Flag any active medication order that conflicts with a documented allergy. For each conflict, state its severity, describe the offending medication and the allergy it conflicts with, and cite both the MedicationRequest and the AllergyIntolerance as evidence. If there are no conflicts, return an empty flag list.",
+  "output_contract": "flag_list",
+  "available_renderings": ["fhir_json", "narrative", "timeline", "table"],
+  "rendering_files": {
+    "fhir_json": "bundle.json",
+    "narrative": "narrative.md",
+    "timeline": "timeline.md",
+    "table": "table.md"
+  },
+  "resource_types": ["Patient", "AllergyIntolerance", "MedicationRequest", "Condition", "Encounter"],
+  "tags": ["medication-reconciliation", "allergy-conflict", "safety", "penicillin", "entered-in-error", "false-alarm"]
+}

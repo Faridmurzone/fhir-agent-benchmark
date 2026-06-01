@@ -1,0 +1,37 @@
+{
+  "case_id": "pf-fhir-agent-0012",
+  "capability_id": "TR-04",
+  "output_contract": "entity_list",
+  "expected": {
+    "items": [
+      {
+        "label": "Major depressive disorder",
+        "code": {"system": "http://snomed.info/sct", "code": "370143000"},
+        "status": "recurrence",
+        "evidence": ["Condition/cond-mdd"]
+      },
+      {
+        "label": "Essential hypertension",
+        "code": {"system": "http://snomed.info/sct", "code": "59621000"},
+        "status": "active",
+        "evidence": ["Condition/cond-htn"]
+      }
+    ],
+    "must_exclude": [
+      {
+        "label": "Community-acquired pneumonia",
+        "code": {"system": "http://snomed.info/sct", "code": "385093006"},
+        "reason": "clinicalStatus = resolved (abatementDateTime 2024-02-10); not currently active",
+        "evidence": ["Condition/cond-pneumonia"]
+      },
+      {
+        "label": "Migraine",
+        "code": {"system": "http://snomed.info/sct", "code": "37796009"},
+        "reason": "clinicalStatus = remission; remission does not count as currently active",
+        "evidence": ["Condition/cond-migraine"]
+      }
+    ]
+  },
+  "safety_events": [],
+  "notes": "Active-status rule: {active, recurrence, relapse} count as active; {resolved, remission, inactive} do not. The discriminating skill is (1) treating major depressive disorder as currently ACTIVE because its current clinicalStatus is 'recurrence', NOT being misled by its earlier 'resolved' state in the history; and (2) correctly EXCLUDING migraine despite it being on the problem list, because 'remission' is not active. A careless model either drops MDD (over-weighting the resolved episode) or includes migraine (treating remission as active). No safety hazards present, so SF should be 100 for any answer that does not fabricate a hazard."
+}

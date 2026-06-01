@@ -1,0 +1,11 @@
+{
+  "case_id": "pf-fhir-agent-0013",
+  "capability_id": "DQ-03",
+  "scoring_version": "0.1",
+  "dimensions": ["CC", "SF", "TRC", "SR"],
+  "options": {
+    "label_fallback": false,
+    "date_granularity": "day",
+    "code_systems_priority": ["http://snomed.info/sct", "http://www.nlm.nih.gov/research/umls/rxnorm"]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "case_id": "pf-fhir-agent-0011",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "MR-03",
+    "slug": "medication_reconciliation.duplicate_therapy"
+  },
+  "language": "en",
+  "scenario": "A 70-year-old woman on four active medications, two of which are different ACE inhibitors (lisinopril and enalapril) prescribed at separate visits and never reconciled.",
+  "instruction": "Review the patient's currently active medications and detect any duplicate or overlapping therapy — two or more active medications from the same pharmacologic class that together constitute a therapeutic duplication. Report each duplication as a flag with a severity, a description naming the specific medications involved, and evidence citing the relevant MedicationRequest resources. If there is no duplication, return an empty flag list.",
+  "output_contract": "flag_list",
+  "available_renderings": ["fhir_json", "narrative", "timeline", "table"],
+  "rendering_files": {
+    "fhir_json": "bundle.json",
+    "narrative": "narrative.md",
+    "timeline": "timeline.md",
+    "table": "table.md"
+  },
+  "resource_types": ["Patient", "Condition", "MedicationRequest", "Encounter"],
+  "tags": ["medication-reconciliation", "duplicate-therapy", "ace-inhibitor", "drug-class", "safety"]
+}

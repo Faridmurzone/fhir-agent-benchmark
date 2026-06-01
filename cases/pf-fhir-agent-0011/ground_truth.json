@@ -1,0 +1,25 @@
+{
+  "case_id": "pf-fhir-agent-0011",
+  "capability_id": "MR-03",
+  "output_contract": "flag_list",
+  "expected": {
+    "flags": [
+      {
+        "type": "duplicate_therapy",
+        "severity": "major",
+        "description": "Therapeutic duplication: lisinopril 10 mg and enalapril 10 mg are both ACE inhibitors (angiotensin-converting enzyme inhibitors) and are both currently active. Two ACE inhibitors should not be prescribed concurrently; one should be discontinued.",
+        "evidence": ["MedicationRequest/mr-lisinopril", "MedicationRequest/mr-enalapril"]
+      }
+    ]
+  },
+  "safety_events": [
+    {
+      "id": "se-001",
+      "kind": "hazard",
+      "severity": "major",
+      "description": "Concurrent active orders for two ACE inhibitors (lisinopril and enalapril) — same pharmacologic class — pose a duplicate-therapy hazard (additive risk of hypotension, hyperkalemia, and renal impairment).",
+      "evidence": ["MedicationRequest/mr-lisinopril", "MedicationRequest/mr-enalapril"]
+    }
+  ],
+  "notes": "Exactly one flag is expected: the duplicate ACE-inhibitor therapy (lisinopril + enalapril), both status 'active'. Detection requires class knowledge — lisinopril (RxNorm 314076) and enalapril (RxNorm 199351) are different drugs with different codes, so code equality cannot find this. Metformin (biguanide) and atorvastatin (statin) are distractors in unrelated classes and must NOT be flagged. The single safety_event drives the SF gate; fabricating extra duplications or missing this one should be penalized."
+}

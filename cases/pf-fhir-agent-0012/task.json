@@ -1,0 +1,22 @@
+{
+  "case_id": "pf-fhir-agent-0012",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "TR-04",
+    "slug": "timeline_reasoning.state_resolution"
+  },
+  "language": "en",
+  "scenario": "A 55-year-old man whose problem list mixes currently active conditions with conditions that are resolved or in remission, including a depressive disorder that was active, then resolved, and has now recurred.",
+  "instruction": "List the patient's CURRENTLY ACTIVE conditions. A condition counts as active if its FHIR clinicalStatus is one of {active, recurrence, relapse}; it does NOT count as active if its clinicalStatus is one of {resolved, remission, inactive}. Reason over the full history: a condition that was previously resolved but whose current clinicalStatus is recurrence (or relapse) IS currently active. For each active condition, give its code and a 'status' field reflecting its current clinicalStatus, and cite the source Condition resource as evidence.",
+  "output_contract": "entity_list",
+  "available_renderings": ["fhir_json", "narrative", "timeline", "table"],
+  "rendering_files": {
+    "fhir_json": "bundle.json",
+    "narrative": "narrative.md",
+    "timeline": "timeline.md",
+    "table": "table.md"
+  },
+  "resource_types": ["Patient", "Condition", "Encounter"],
+  "tags": ["timeline-reasoning", "state-resolution", "active-vs-resolved", "recurrence", "remission", "hard"]
+}

@@ -1,0 +1,90 @@
+{
+  "resourceType": "Bundle",
+  "id": "pf-fhir-agent-0013-bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "Patient/pat-013",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-013",
+        "gender": "female",
+        "birthDate": "1965-11-22",
+        "name": [{"use": "official", "family": "Synthetic", "given": ["Rosa"]}]
+      }
+    },
+    {
+      "fullUrl": "Condition/cond-htn",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-htn",
+        "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "resolved", "display": "Resolved"}]},
+        "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "59621000", "display": "Essential hypertension"}], "text": "Essential hypertension"},
+        "subject": {"reference": "Patient/pat-013"},
+        "onsetDateTime": "2019-05-03",
+        "abatementDateTime": "2025-01-15",
+        "recordedDate": "2019-05-03"
+      }
+    },
+    {
+      "fullUrl": "MedicationRequest/mr-lisinopril",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "mr-lisinopril",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "314076", "display": "Lisinopril 10 MG Oral Tablet"}], "text": "Lisinopril 10 mg"},
+        "subject": {"reference": "Patient/pat-013"},
+        "authoredOn": "2026-02-01",
+        "encounter": {"reference": "Encounter/enc-013"},
+        "reasonReference": [{"reference": "Condition/cond-htn"}],
+        "dosageInstruction": [{"text": "10 mg orally once daily for blood pressure"}]
+      }
+    },
+    {
+      "fullUrl": "Encounter/enc-013",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-013",
+        "status": "finished",
+        "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory"},
+        "type": [{"text": "Primary care follow-up"}],
+        "subject": {"reference": "Patient/pat-013"},
+        "period": {"start": "2026-02-01", "end": "2026-02-01"}
+      }
+    },
+    {
+      "fullUrl": "Observation/obs-bp",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-bp",
+        "status": "final",
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "vital-signs"}]}],
+        "code": {"coding": [{"system": "http://loinc.org", "code": "85354-9", "display": "Blood pressure panel"}], "text": "Blood pressure"},
+        "subject": {"reference": "Patient/pat-013"},
+        "effectiveDateTime": "2026-02-01",
+        "encounter": {"reference": "Encounter/enc-013"},
+        "component": [
+          {"code": {"coding": [{"system": "http://loinc.org", "code": "8480-6", "display": "Systolic blood pressure"}]}, "valueQuantity": {"value": 128, "unit": "mmHg", "system": "http://unitsofmeasure.org", "code": "mm[Hg]"}},
+          {"code": {"coding": [{"system": "http://loinc.org", "code": "8462-4", "display": "Diastolic blood pressure"}]}, "valueQuantity": {"value": 80, "unit": "mmHg", "system": "http://unitsofmeasure.org", "code": "mm[Hg]"}}
+        ]
+      }
+    },
+    {
+      "fullUrl": "Observation/obs-k",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-k",
+        "status": "final",
+        "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "laboratory"}]}],
+        "code": {"coding": [{"system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma"}], "text": "Serum potassium"},
+        "subject": {"reference": "Patient/pat-013"},
+        "effectiveDateTime": "2026-02-01",
+        "encounter": {"reference": "Encounter/enc-013"},
+        "valueQuantity": {"value": 4.3, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L"}
+      }
+    }
+  ]
+}
