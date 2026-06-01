@@ -80,6 +80,16 @@ IDs are immutable across versions.
   require profile conformance (US Core), transaction bundles, and spec edge cases
   (contained resources, choice types, identifier references).
 
+- FV layer 7 — **US Core profile conformance** (`score_fv` + `US_CORE_PROFILES`
+  for Patient/Condition/Observation/MedicationRequest/AllergyIntolerance/
+  Encounter). Conditional: a case opts in via `scoring.json`
+  `options.profile: "us-core"`; layer 7 then checks `meta.profile`, must-support
+  elements, and required category bindings (up to 10 pts). When not requested,
+  layers 1–6 renormalize to 100 (no penalty for an unrequested profile). New case
+  `0023` (US Core Condition). The layer discriminates — a valid R4 resource that
+  is not US Core-conformant drops to FV 93 / overall 60 — though Opus 4.8, given
+  explicit instructions, produced a fully conformant resource (FV/CC/TRC 100).
+
 ### Changed
 - **Matching semantics (scoring).** Surfaced by a sanity run: code-only entity
   matching unfairly scored narrative/timeline renderings at 0 (they carry no

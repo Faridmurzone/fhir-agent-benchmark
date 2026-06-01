@@ -34,7 +34,7 @@ def test_generation_cc_via_assertions():
     card = score_case(case.ground_truth, case.scoring, {"narrative": {"resource": ref}})
     assert card["CC"] == 100         # el recurso de referencia satisface las aserciones
     assert card["TRC"] == 100        # referencia subject + encounter presentes
-    assert card["FV"] == 90          # válido salvo capa de perfil (deferida)
+    assert card["FV"] == 100         # R4 válido; sin perfil pedido, capas 1-6 renormalizan a 100
 
 
 def test_generation_cc_partial_when_wrong_code():
@@ -47,6 +47,34 @@ def test_generation_cc_partial_when_wrong_code():
 
 
 # --- FV: gates y validez estructural ---
+
+def test_us_core_layer7_discriminates():
+    import copy
+    case = load_case(CASES / "pf-fhir-agent-0023")
+    assert case.scoring["options"]["profile"] == "us-core"
+    ref = case.ground_truth["expected"]["reference_resource"]
+
+    # Conformante: capa 7 completa -> FV 100.
+    good = score_case(case.ground_truth, case.scoring, {"narrative": {"resource": ref}})
+    assert good["FV"] == 100
+
+    # R4 válido pero NO US Core (sin meta.profile ni category) -> FV < 100.
+    bad = copy.deepcopy(ref)
+    bad.pop("meta", None)
+    bad.pop("category", None)
+    low = score_case(case.ground_truth, case.scoring, {"narrative": {"resource": bad}})
+    assert low["FV"] < 100
+
+
+def test_fv_profile_renormalizes_when_not_requested():
+    # Sin perfil pedido, un R4 válido (capas 1-6 completas) renormaliza a 100.
+    good = {"resource": {"resourceType": "Observation", "status": "final",
+                         "code": {"coding": [{"system": "http://loinc.org", "code": "4548-4"}]},
+                         "subject": {"reference": "Patient/p1"}}}
+    assert score_fv(good, profile=None).score == 100.0
+    # Con perfil us-core pedido y sin meta.profile, no llega a 100.
+    assert score_fv(good, profile="us-core").score < 100.0
+
 
 def test_fv_gates():
     assert score_fv({"resource": "not-an-object"}).score == 0.0      # capa 1

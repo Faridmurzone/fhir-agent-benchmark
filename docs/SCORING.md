@@ -136,12 +136,18 @@ each layer must pass to score the next:
 | 4 | Datatype correctness (e.g. `CodeableConcept`, `Reference`, `dateTime`) | 25 |
 | 5 | Terminology binding shape (system+code present where bound) | 20 |
 | 6 | Internal reference integrity (refs resolve within the bundle) | 15 |
-| 7 | Profile validation (US Core / declared profile) where applicable | 10 |
+| 7 | Profile conformance (US Core) — **only when the case requests it** | 10 |
 
 - Layers 1–2 are **gates**: failing either ⇒ `FV(case) = 0`.
-- Layers 3–7 sum to 100 when all pass; partial credit is proportional.
-- The validator is shipped in `benchmark_runner/validate_output.py` and pinned to
-  a specific FHIR package version, recorded in the result.
+- **Layer 7 is conditional.** A case opts in via `scoring.json`
+  `options.profile: "us-core"`. When requested, layer 7 checks US Core
+  conformance — `meta.profile` declares the profile, must-support elements are
+  present, and required terminology bindings hold (e.g. the Condition/Observation
+  `category` system) — worth up to 10, so the 100 ceiling demands a conformant
+  resource. When **not** requested, layer 7 does not apply and layers 1–6 are
+  **renormalized to 100**: a case is never penalized for a profile it did not ask
+  for. (Implemented in `benchmark_runner/score_case.py::score_fv`.)
+- Layers 3–6 (and 7 when active) award proportional partial credit.
 
 > **Decision:** FV checks **validity and interoperability shape**, not byte
 > equality with a reference resource. Clinical correctness of the *content* of a

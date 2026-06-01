@@ -1,0 +1,14 @@
+{
+  "case_id": "pf-fhir-agent-0023",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {"id": "FG-02", "slug": "fhir_generation.gen_condition"},
+  "language": "en",
+  "scenario": "Generate a US Core-conformant Condition for essential hypertension.",
+  "instruction": "Generate a FHIR R4 Condition resource that conforms to the US Core Condition (Problems and Health Concerns) profile for the active, confirmed essential hypertension described in the note. Declare the US Core profile in meta.profile, include category (problem-list-item), clinicalStatus active, verificationStatus confirmed, SNOMED code 59621000, and subject Patient/pat-001. Respond with only the JSON object {\"resource\": { ... }}.",
+  "output_contract": "fhir_resource",
+  "available_renderings": ["narrative"],
+  "rendering_files": {"narrative": "narrative.md"},
+  "resource_types": ["Patient"],
+  "tags": ["fhir-generation", "condition", "us-core", "profile", "hard"]
+}

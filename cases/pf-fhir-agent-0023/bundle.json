@@ -1,0 +1,8 @@
+{
+  "resourceType": "Bundle",
+  "id": "pf-fhir-agent-0023-bundle",
+  "type": "collection",
+  "entry": [
+    {"fullUrl": "Patient/pat-001", "resource": {"resourceType": "Patient", "id": "pat-001", "gender": "female", "birthDate": "1970-01-08", "name": [{"family": "Synthetic", "given": ["Priya"]}]}}
+  ]
+}

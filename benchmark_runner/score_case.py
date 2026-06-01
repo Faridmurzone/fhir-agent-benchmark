@@ -421,9 +421,59 @@ _R4_RESOURCE_TYPES = set(_FV_REQUIRED_FIELDS) | {
     "Practitioner", "Organization", "Goal",
 }
 
+# --- Perfiles US Core (v6.1, aproximación pragmática v0.1) ------------------ #
+# Por cada tipo: la URL canónica del perfil + las restricciones que US Core
+# AÑADE sobre R4 base (must-support / required que el core no exige). La capa 7
+# valida: (a) meta.profile declara el perfil, y (b) se cumplen esas reglas.
+_US_CORE = "http://hl7.org/fhir/us/core/StructureDefinition/"
 
-def score_fv(model_output: dict) -> metrics.MetricResult:
-    """Validador FHIR estructural ligero (v0.1).
+US_CORE_PROFILES: dict[str, dict] = {
+    "Patient": {
+        "profile": _US_CORE + "us-core-patient",
+        "must_support": ["identifier", "name", "gender"],
+        "bindings": [],
+    },
+    "Condition": {
+        # US Core Condition Problems and Health Concerns.
+        "profile": _US_CORE + "us-core-condition-problems-health-concerns",
+        "must_support": ["category", "code", "subject", "clinicalStatus"],
+        "bindings": [
+            # category debe incluir el system de US Core category o el de R4.
+            {"path": "category", "any_system": [
+                "http://terminology.hl7.org/CodeSystem/condition-category",
+                "http://hl7.org/fhir/us/core/CodeSystem/condition-category"]},
+        ],
+    },
+    "Observation": {
+        # US Core Laboratory Result Observation.
+        "profile": _US_CORE + "us-core-observation-lab",
+        "must_support": ["status", "category", "code", "subject"],
+        "bindings": [
+            {"path": "category", "any_system": [
+                "http://terminology.hl7.org/CodeSystem/observation-category"],
+             "any_code": ["laboratory"]},
+        ],
+    },
+    "MedicationRequest": {
+        "profile": _US_CORE + "us-core-medicationrequest",
+        "must_support": ["status", "intent", "subject", "authoredOn"],
+        "bindings": [],
+    },
+    "AllergyIntolerance": {
+        "profile": _US_CORE + "us-core-allergyintolerance",
+        "must_support": ["clinicalStatus", "code", "patient"],
+        "bindings": [],
+    },
+    "Encounter": {
+        "profile": _US_CORE + "us-core-encounter",
+        "must_support": ["status", "class", "type", "subject"],
+        "bindings": [],
+    },
+}
+
+
+def score_fv(model_output: dict, profile: str | None = None) -> metrics.MetricResult:
+    """Validador FHIR estructural (v0.1).
 
     Capas (ver docs/SCORING.md):
         1. JSON bien formado (objeto)            -> gate
@@ -432,10 +482,13 @@ def score_fv(model_output: dict) -> metrics.MetricResult:
         4. corrección de datatypes (shape)       -> 25
         5. binding de terminología (system+code) -> 20
         6. integridad de referencias internas    -> 15
-        7. validación de perfil                   -> 10 (no implementada en v0.1)
+        7. conformidad de perfil                  -> 10 (solo si ``profile`` aplica)
 
-    NOTA: la validación de perfil (US Core / declarado) es una capa posterior;
-    en v0.1 la capa 7 no otorga puntos. Esto se documenta explícitamente.
+    Si no se solicita perfil (``profile`` None), la capa 7 NO aplica y el FV se
+    renormaliza sobre las capas 1-6 (techo 100): no se penaliza por algo que el
+    caso no pide. Si ``profile`` == "us-core", la capa 7 valida conformidad
+    US Core (meta.profile + must-support + bindings) y el techo de 100 exige
+    cumplirla.
     """
     resource = (model_output or {}).get("resource")
 
@@ -480,10 +533,77 @@ def score_fv(model_output: dict) -> metrics.MetricResult:
     detail["layer6_references"] = l6_detail
     score += layer6
 
-    # Capa 7: perfil (10) — no implementada en v0.1.
-    detail["layer7_profile"] = {"points": 0.0, "note": "profile validation deferred to a later layer"}
+    # Capa 7: conformidad de perfil (10) — solo si el caso la pide.
+    if profile == "us-core":
+        layer7, l7_detail = _check_us_core(resource, rtype)
+        detail["layer7_profile"] = l7_detail
+        score += layer7
+        return metrics.MetricResult(min(100.0, score), detail)
 
-    return metrics.MetricResult(min(100.0, score), detail)
+    # Sin perfil solicitado: la capa 7 no aplica; renormalizamos capas 1-6 a 100.
+    detail["layer7_profile"] = {"points": None, "note": "profile not requested; layers 1-6 renormalized to 100"}
+    normalized = score / 90.0 * 100.0  # capas 3-6 suman 90
+    return metrics.MetricResult(min(100.0, normalized), detail)
+
+
+def _check_us_core(resource: dict, rtype: str) -> tuple[float, dict]:
+    """Capa 7: conformidad US Core. <=10 puntos. Reparte:
+        - 4 pts: meta.profile declara el perfil US Core del tipo,
+        - 4 pts: must-support presentes,
+        - 2 pts: bindings requeridos (system/code esperados).
+    """
+    spec = US_CORE_PROFILES.get(rtype)
+    if not spec:
+        return 0.0, {"points": 0.0, "note": f"no US Core profile defined for {rtype}"}
+
+    notes: dict[str, Any] = {}
+    pts = 0.0
+
+    # (a) meta.profile declarado.
+    profiles = ((resource.get("meta") or {}).get("profile")) or []
+    declared = spec["profile"] in profiles
+    notes["profile_declared"] = declared
+    if declared:
+        pts += 4.0
+
+    # (b) must-support presentes.
+    ms = spec["must_support"]
+    present = [f for f in ms if resource.get(f) not in (None, "", [], {})]
+    notes["must_support"] = {"required": ms, "present": present}
+    if ms:
+        pts += 4.0 * len(present) / len(ms)
+    else:
+        pts += 4.0
+
+    # (c) bindings requeridos.
+    bindings = spec.get("bindings", [])
+    if not bindings:
+        pts += 2.0
+        notes["bindings"] = "none required"
+    else:
+        ok_all = True
+        bnotes = []
+        for b in bindings:
+            field = resource.get(b["path"])
+            entries = field if isinstance(field, list) else ([field] if field else [])
+            systems, codes = set(), set()
+            for e in entries:
+                for c in ((e or {}).get("coding") or []):
+                    if c.get("system"):
+                        systems.add(c["system"])
+                    if c.get("code"):
+                        codes.add(c["code"])
+            sys_ok = (not b.get("any_system")) or bool(systems & set(b["any_system"]))
+            code_ok = (not b.get("any_code")) or bool(codes & set(b["any_code"]))
+            ok = sys_ok and code_ok
+            ok_all = ok_all and ok
+            bnotes.append({"path": b["path"], "ok": ok})
+        notes["bindings"] = bnotes
+        if ok_all:
+            pts += 2.0
+
+    notes["points"] = round(pts, 2)
+    return pts, notes
 
 
 def _is_reference_shaped(value: Any) -> bool:
@@ -623,7 +743,8 @@ def score_rendering(
         result["critical_uncaught"] = False
 
     if "FV" in dims or contract in ("fhir_resource", "fhir_bundle"):
-        fv = score_fv(model_output)
+        profile = _options(scoring_cfg).get("profile")
+        fv = score_fv(model_output, profile=profile)
         result["FV"] = fv.score
         result["FV_detail"] = fv.detail
 

@@ -1,0 +1,29 @@
+{
+  "case_id": "pf-fhir-agent-0023",
+  "capability_id": "FG-02",
+  "output_contract": "fhir_resource",
+  "expected": {
+    "assertions": [
+      {"path": "resourceType", "equals": "Condition"},
+      {"path": "meta.profile[*]", "equals": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns"},
+      {"path": "category[*].coding[*].code", "equals": "problem-list-item"},
+      {"path": "clinicalStatus.coding[*].code", "equals": "active"},
+      {"path": "verificationStatus.coding[*].code", "equals": "confirmed"},
+      {"path": "code.coding[*].code", "equals": "59621000"},
+      {"path": "subject.reference", "equals": "Patient/pat-001"}
+    ],
+    "evidence": ["Patient/pat-001"],
+    "reference_resource": {
+      "resourceType": "Condition",
+      "id": "cond-htn",
+      "meta": {"profile": ["http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns"]},
+      "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active"}]},
+      "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
+      "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
+      "code": {"coding": [{"system": "http://snomed.info/sct", "code": "59621000", "display": "Essential hypertension"}], "text": "Essential hypertension"},
+      "subject": {"reference": "Patient/pat-001"}
+    }
+  },
+  "safety_events": [],
+  "notes": "FG-02 US Core: requires meta.profile, category, clinical/verification status and the US Core category binding. FV layer 7 (us-core) is active, so the ceiling is 100 only if the resource conforms to the profile."
+}

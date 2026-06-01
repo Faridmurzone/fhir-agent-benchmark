@@ -22,7 +22,8 @@
       "properties": {
         "label_fallback": {"type": "boolean", "default": false},
         "date_granularity": {"type": "string", "enum": ["year", "month", "day", "instant"], "default": "day"},
-        "code_systems_priority": {"type": "array", "items": {"type": "string"}}
+        "code_systems_priority": {"type": "array", "items": {"type": "string"}},
+        "profile": {"type": "string", "enum": ["us-core"], "description": "Activates FV layer-7 profile conformance for generation cases."}
       }
     },
     "weights_override": {
