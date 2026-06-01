@@ -1,0 +1,14 @@
+{
+  "case_id": "pf-fhir-agent-0022",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {"id": "FG-04", "slug": "fhir_generation.gen_medicationrequest"},
+  "language": "en",
+  "scenario": "Structure a new medication order into a valid FHIR R4 MedicationRequest.",
+  "instruction": "Generate a valid FHIR R4 MedicationRequest for the lisinopril 10 mg once-daily order described in the note. Use RxNorm 314076, status active, intent order, authoredOn 2026-05-20, subject Patient/pat-001, and include a dosageInstruction. Respond with only the JSON object {\"resource\": { ... }}.",
+  "output_contract": "fhir_resource",
+  "available_renderings": ["narrative"],
+  "rendering_files": {"narrative": "narrative.md"},
+  "resource_types": ["Patient", "Encounter"],
+  "tags": ["fhir-generation", "medicationrequest", "rxnorm", "hard"]
+}

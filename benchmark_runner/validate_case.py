@@ -65,6 +65,14 @@ def _check_expected_shape(contract: str, expected: dict) -> list[str]:
         if not isinstance(expected.get("abstained"), bool):
             return ["expected.abstained must be a boolean for abstention contract"]
         return []
+    # Generación: el gold puede declarar el recurso esperado, o aserciones por
+    # path, o campos planos. Cualquiera de los tres es válido.
+    if contract in ("fhir_resource", "fhir_bundle"):
+        if not any(k in expected for k in ("resource", "assertions", "fields")):
+            return [f"expected for '{contract}' needs one of: resource, assertions, fields"]
+        if "assertions" in expected and not isinstance(expected["assertions"], list):
+            return ["expected.assertions must be a list"]
+        return []
     spec = _CONTRACT_REQUIRED.get(contract)
     if not spec:
         return [f"unknown output_contract '{contract}'"]

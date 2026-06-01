@@ -1,0 +1,30 @@
+{
+  "case_id": "pf-fhir-agent-0022",
+  "capability_id": "FG-04",
+  "output_contract": "fhir_resource",
+  "expected": {
+    "assertions": [
+      {"path": "resourceType", "equals": "MedicationRequest"},
+      {"path": "status", "equals": "active"},
+      {"path": "intent", "equals": "order"},
+      {"path": "medicationCodeableConcept.coding[*].system", "equals": "http://www.nlm.nih.gov/research/umls/rxnorm"},
+      {"path": "medicationCodeableConcept.coding[*].code", "equals": "314076"},
+      {"path": "subject.reference", "equals": "Patient/pat-001"},
+      {"path": "authoredOn", "equals": "2026-05-20"}
+    ],
+    "evidence": ["Patient/pat-001"],
+    "reference_resource": {
+      "resourceType": "MedicationRequest",
+      "id": "mr-lisinopril",
+      "status": "active",
+      "intent": "order",
+      "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "314076", "display": "Lisinopril 10 MG Oral Tablet"}], "text": "Lisinopril 10 mg"},
+      "subject": {"reference": "Patient/pat-001"},
+      "authoredOn": "2026-05-20",
+      "encounter": {"reference": "Encounter/enc-001"},
+      "dosageInstruction": [{"text": "10 mg orally once daily"}]
+    }
+  },
+  "safety_events": [],
+  "notes": "FG-04: generate a valid MedicationRequest with the correct RxNorm code, status/intent, subject and authoredOn."
+}

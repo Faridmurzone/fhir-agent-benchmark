@@ -1,0 +1,14 @@
+{
+  "case_id": "pf-fhir-agent-0021",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {"id": "FG-02", "slug": "fhir_generation.gen_condition"},
+  "language": "en",
+  "scenario": "Structure a new diagnosis into a valid FHIR R4 Condition.",
+  "instruction": "Generate a valid FHIR R4 Condition resource for the active, confirmed type 2 diabetes mellitus described in the note. Use SNOMED CT code 44054006, clinicalStatus active, verificationStatus confirmed, and subject Patient/pat-001. Respond with only the JSON object {\"resource\": { ... }}.",
+  "output_contract": "fhir_resource",
+  "available_renderings": ["narrative"],
+  "rendering_files": {"narrative": "narrative.md"},
+  "resource_types": ["Patient", "Encounter"],
+  "tags": ["fhir-generation", "condition", "snomed", "hard"]
+}

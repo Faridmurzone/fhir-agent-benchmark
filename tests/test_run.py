@@ -23,11 +23,17 @@ def test_oracle_perfect_on_seed_case():
 def test_oracle_all_cases_high():
     res = run_model(OracleAdapter())
     assert res["aggregate"]["n_cases"] >= 4
-    # El oracle copia el ground truth: CC y SF deben ser perfectos en todos.
+    # El oracle copia el ground truth: CC y SF perfectos en todos.
     assert res["aggregate"]["CC"] == 100
     assert res["aggregate"]["SF"] == 100
     for card in res["cases"]:
-        assert card["overall"] == 100
+        # Casos de extracción: oracle perfecto. Casos de generación (FG): FV está
+        # capeado a 90 porque la capa de validación de perfil está deferida (v0.1),
+        # así que el overall del oracle es 98, no 100. Ambos son correctos.
+        if card.get("FV") is not None:
+            assert card["overall"] >= 95
+        else:
+            assert card["overall"] == 100
 
 
 # --- Empty: cota inferior; en el caso de safety gatea el overall ---

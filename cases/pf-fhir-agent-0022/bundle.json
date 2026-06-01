@@ -1,0 +1,9 @@
+{
+  "resourceType": "Bundle",
+  "id": "pf-fhir-agent-0022-bundle",
+  "type": "collection",
+  "entry": [
+    {"fullUrl": "Patient/pat-001", "resource": {"resourceType": "Patient", "id": "pat-001", "gender": "male", "birthDate": "1962-09-03", "name": [{"family": "Synthetic", "given": ["David"]}]}},
+    {"fullUrl": "Encounter/enc-001", "resource": {"resourceType": "Encounter", "id": "enc-001", "status": "finished", "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory"}, "type": [{"text": "Office visit"}], "subject": {"reference": "Patient/pat-001"}, "period": {"start": "2026-05-20", "end": "2026-05-20"}}}
+  ]
+}

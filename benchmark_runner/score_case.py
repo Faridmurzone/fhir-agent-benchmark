@@ -107,13 +107,92 @@ def score_cc(ground_truth: dict, scoring_cfg: dict, model_output: dict) -> metri
         return _score_abstention_cc(expected, out)
 
     if contract in ("fhir_resource", "fhir_bundle"):
-        # CC del contenido generado: se evalúa sobre los campos esperados si
-        # los hay (estructura {"fields": {...}}); si no, no hay CC determinista.
+        # CC del contenido generado: aserciones por path sobre el recurso (más
+        # apropiado para FHIR, robusto a variación de serialización). Si no hay
+        # aserciones, se cae a structured_match sobre `fields`.
+        resource = out.get("resource") or {}
+        assertions = expected.get("assertions")
+        if assertions:
+            return _score_assertions(resource, assertions, date_gran)
         return metrics.structured_match(
-            (out.get("resource") or {}), expected.get("fields", {}), date_granularity=date_gran
+            resource, expected.get("fields", {}), date_granularity=date_gran
         )
 
     return metrics.MetricResult(0.0, {"error": f"unknown contract {contract}"})
+
+
+def _resolve_path(obj: Any, path: str) -> tuple[bool, Any]:
+    """Resuelve un path estilo `code.coding[0].system` o un wildcard de lista
+    `code.coding[*].code`. Devuelve (encontrado, valor|lista_de_valores).
+
+    Con `[*]` recolecta los valores en todos los elementos de la lista (para
+    aserciones de pertenencia tipo "algún coding tiene este code").
+    """
+    import re as _re
+
+    tokens = _re.findall(r"[^.\[\]]+|\[\d+\]|\[\*\]", path)
+    cur: Any = obj
+    collecting = False
+    bucket: list[Any] = [obj]
+    for tok in tokens:
+        nxt: list[Any] = []
+        for node in (bucket if collecting else [cur]):
+            if tok == "[*]":
+                if isinstance(node, list):
+                    nxt.extend(node)
+            elif tok.startswith("[") and tok.endswith("]"):
+                idx = int(tok[1:-1])
+                if isinstance(node, list) and -len(node) <= idx < len(node):
+                    nxt.append(node[idx])
+            else:
+                if isinstance(node, dict) and tok in node:
+                    nxt.append(node[tok])
+        if tok == "[*]":
+            collecting = True
+        if collecting:
+            bucket = nxt
+            if not bucket:
+                return (False, None)
+        else:
+            if not nxt:
+                return (False, None)
+            cur = nxt[0]
+    return (True, bucket if collecting else cur)
+
+
+def _score_assertions(resource: dict, assertions: list[dict], date_gran: str) -> metrics.MetricResult:
+    """CC de generación: fracción de aserciones {path, equals} que se cumplen."""
+    results = []
+    for a in assertions:
+        path, expected_val = a.get("path"), a.get("equals")
+        found, val = _resolve_path(resource, path)
+        if not found:
+            ok = False
+        elif isinstance(val, list):  # wildcard: pertenencia
+            ok = any(_value_eq(v, expected_val, date_gran) for v in val)
+        else:
+            ok = _value_eq(val, expected_val, date_gran)
+        results.append({"path": path, "expected": expected_val, "ok": ok})
+    n = len(results)
+    passed = sum(1 for r in results if r["ok"])
+    score = 100.0 * passed / n if n else 0.0
+    return metrics.MetricResult(score, {"kind": "assertions", "passed": passed,
+                                        "total": n, "results": results})
+
+
+def _value_eq(a: Any, b: Any, date_gran: str) -> bool:
+    """Igualdad tolerante: números por valor, fechas por granularidad, resto normalizado."""
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+        return abs(float(a) - float(b)) < 1e-9
+    sa, sb = str(a).strip(), str(b).strip()
+    if _re_date(sa) and _re_date(sb):
+        return metrics.normalize_date(sa, date_gran) == metrics.normalize_date(sb, date_gran)
+    return metrics.normalize_label(sa) == metrics.normalize_label(sb)
+
+
+def _re_date(s: str) -> bool:
+    import re as _re
+    return bool(_re.match(r"^\d{4}-\d{2}", s))
 
 
 def _flag_identity(flag: dict, label_fallback: bool) -> Any:
@@ -173,13 +252,26 @@ def score_trc(ground_truth: dict, scoring_cfg: dict, model_output: dict) -> metr
                                 **res.detail, "score": res.score})
 
     elif contract in ("scalar", "structured", "fhir_resource", "fhir_bundle"):
-        # Un único elemento con evidencia a nivel de output; se acredita solo si
-        # la respuesta es correcta (CC == 100).
+        # Un único elemento; se acredita solo si la respuesta es correcta.
         cc = score_cc(ground_truth, scoring_cfg, model_output)
         if cc.score >= 100.0:
-            pred_ev = out.get("evidence", [])
             gold_ev = expected.get("evidence", [])
-            res = metrics.evidence_f1(pred_ev, gold_ev)
+            if contract in ("fhir_resource", "fhir_bundle"):
+                # En generación la evidencia son las referencias DENTRO del
+                # recurso generado (subject/encounter/reason/...), no un campo
+                # `evidence` aparte. Se puntúa por RECALL de las referencias
+                # requeridas: incluir referencias internas válidas de más no
+                # debe penalizar.
+                refs: set[str] = set()
+                _refs_acc: list[str] = []
+                _gather_refs(out.get("resource") or {}, _refs_acc)
+                refs = {r.strip() for r in _refs_acc}
+                gold_set = {r.strip() for r in gold_ev}
+                recall = (len(gold_set & refs) / len(gold_set) * 100.0) if gold_set else 100.0
+                res = metrics.MetricResult(recall, {"gold": sorted(gold_set),
+                                                    "found": sorted(refs), "recall": recall})
+            else:
+                res = metrics.evidence_f1(out.get("evidence", []), gold_ev)
             element_scores.append(res.score)
             per_element.append({"identity": "answer", **res.detail, "score": res.score})
         else:

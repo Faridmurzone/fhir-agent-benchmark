@@ -1,0 +1,14 @@
+{
+  "case_id": "pf-fhir-agent-0020",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {"id": "FG-01", "slug": "fhir_generation.gen_observation"},
+  "language": "en",
+  "scenario": "Structure a free-text HbA1c lab result into a valid FHIR R4 Observation.",
+  "instruction": "Generate a valid FHIR R4 Observation resource for the HbA1c result of 7.2% described in the clinical note. Use LOINC code 4548-4, status final, laboratory category, effectiveDateTime 2026-05-20, subject Patient/pat-001, encounter Encounter/enc-001, and a UCUM valueQuantity of 7.2 percent. Respond with only the JSON object {\"resource\": { ... }}.",
+  "output_contract": "fhir_resource",
+  "available_renderings": ["narrative"],
+  "rendering_files": {"narrative": "narrative.md"},
+  "resource_types": ["Patient", "Encounter"],
+  "tags": ["fhir-generation", "observation", "loinc", "hard"]
+}

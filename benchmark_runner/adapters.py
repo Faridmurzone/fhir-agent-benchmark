@@ -72,7 +72,9 @@ class OracleAdapter:
                 "missing": expected.get("missing", []),
             }
         if contract in ("fhir_resource", "fhir_bundle"):
-            return {"resource": expected.get("resource", {})}
+            # Para generación, el gold puede traer un recurso de referencia
+            # ejemplar (reference_resource) que satisface las aserciones.
+            return {"resource": expected.get("reference_resource") or expected.get("resource", {})}
         return {}
 
 

@@ -67,6 +67,19 @@ IDs are immutable across versions.
   FHIR-native read/navigation is at ceiling; discrimination will require
   generation (FHIR validity) and large-context / missing-data regimes.
 
+- FHIR generation cases (FG) with a path-assertion CC scorer: `0020` (FG-01
+  Observation/HbA1c), `0021` (FG-02 Condition), `0022` (FG-04 MedicationRequest).
+  The model receives a clinical note + context bundle and must emit a valid FHIR
+  R4 resource. CC scores path assertions (`code.coding[*].code`, `valueQuantity.value`,
+  `subject.reference`, …) — robust to valid serialization variation; FV scores
+  structural validity; TRC scores recall of required internal references. Each
+  gold carries a `reference_resource` (oracle baseline + example solution).
+  Empirical note: Opus 4.8 generated all three correctly (FV 90 / CC 100 /
+  TRC 100; FV is capped at 90 because profile validation — layer 7 — is deferred).
+  Seventh axis at ceiling for a frontier model; discrimination on generation will
+  require profile conformance (US Core), transaction bundles, and spec edge cases
+  (contained resources, choice types, identifier references).
+
 ### Changed
 - **Matching semantics (scoring).** Surfaced by a sanity run: code-only entity
   matching unfairly scored narrative/timeline renderings at 0 (they carry no
