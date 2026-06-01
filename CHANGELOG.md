@@ -90,6 +90,15 @@ IDs are immutable across versions.
   is not US Core-conformant drops to FV 93 / overall 60 — though Opus 4.8, given
   explicit instructions, produced a fully conformant resource (FV/CC/TRC 100).
 
+- **Independent FHIR validation for FV** (`fhir_validate.py` using `fhir.resources`
+  R4B official models). Structural R4 validity is now decided by a validator built
+  from HL7's StructureDefinitions, not a hand-written checker — removing a
+  "judge-and-jury" bias. Cross-checking surfaced real holes the heuristic missed
+  (e.g. it did not require `MedicationRequest.medication[x]`, nor catch a non-
+  numeric `valueQuantity.value`); the official validator now flags both. Optional
+  dependency with a documented heuristic fallback; the result records which
+  validator was used.
+
 ### Changed
 - **Matching semantics (scoring).** Surfaced by a sanity run: code-only entity
   matching unfairly scored narrative/timeline renderings at 0 (they carry no

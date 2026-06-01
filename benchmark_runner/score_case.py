@@ -29,6 +29,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from . import fhir_validate as _fhir_validate
 from . import metrics
 from .taxonomy import get_capability
 
@@ -506,32 +507,37 @@ def score_fv(model_output: dict, profile: str | None = None) -> metrics.MetricRe
     detail: dict[str, Any] = {"layer1_json": True, "layer2_resourceType": True, "resourceType": rtype}
     score = 0.0
 
-    # Capa 3: elementos requeridos (30).
-    required = _FV_REQUIRED_FIELDS.get(rtype, [])
-    if required:
-        present = [f for f in required if resource.get(f) not in (None, "", [], {})]
-        layer3 = 30.0 * len(present) / len(required)
-        detail["layer3_required"] = {"required": required, "present": present, "points": layer3}
+    # Capas 3-4-6 (estructura R4: required, cardinalidad, datatypes, choice types,
+    # referencias): si hay un validador FHIR OFICIAL disponible, es la autoridad
+    # (no nuestro heurístico). Vale 70 pts y es binario por elemento del spec.
+    if _fhir_validate.available():
+        ok, errs = _fhir_validate.validate(resource)
+        layer_struct = 70.0 if ok else 0.0
+        score += layer_struct
+        detail["structural_official"] = {"validator": "fhir.resources R4B", "valid": ok,
+                                          "errors": errs, "points": layer_struct}
     else:
-        layer3 = 30.0
-        detail["layer3_required"] = {"required": [], "points": layer3}
-    score += layer3
-
-    # Capa 4: datatypes (25). Chequeo de shape de CodeableConcept/Reference/dateTime.
-    layer4, l4_detail = _check_datatypes(resource)
-    detail["layer4_datatypes"] = l4_detail
-    score += layer4
+        # Fallback heurístico (sin la librería): capas 3 (30) + 4 (25) + 6 (15).
+        required = _FV_REQUIRED_FIELDS.get(rtype, [])
+        if required:
+            present = [f for f in required if resource.get(f) not in (None, "", [], {})]
+            layer3 = 30.0 * len(present) / len(required)
+            detail["layer3_required"] = {"required": required, "present": present, "points": layer3}
+        else:
+            layer3 = 30.0
+            detail["layer3_required"] = {"required": [], "points": layer3}
+        layer4, l4_detail = _check_datatypes(resource)
+        detail["layer4_datatypes"] = l4_detail
+        layer6, l6_detail = _check_internal_refs(resource, rtype)
+        detail["layer6_references"] = l6_detail
+        score += layer3 + layer4 + layer6
+        detail["structural_official"] = {"validator": "heuristic_fallback"}
 
     # Capa 5: binding de terminología (20): si hay un `code` CodeableConcept,
     # debe tener al menos un coding con system y code.
     layer5, l5_detail = _check_terminology(resource)
     detail["layer5_terminology"] = l5_detail
     score += layer5
-
-    # Capa 6: integridad de referencias internas (15).
-    layer6, l6_detail = _check_internal_refs(resource, rtype)
-    detail["layer6_references"] = l6_detail
-    score += layer6
 
     # Capa 7: conformidad de perfil (10) — solo si el caso la pide.
     if profile == "us-core":

@@ -1,5 +1,9 @@
 # Runner / validación
 jsonschema>=4.20
 
+# Validación FHIR R4 INDEPENDIENTE (modelos oficiales HL7) para la dimensión FV.
+# Recomendado: sin esto, FV cae a un validador heurístico (menos estricto).
+fhir.resources>=8.0
+
 # Dev / test
 pytest>=8.0

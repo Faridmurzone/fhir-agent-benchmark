@@ -76,6 +76,36 @@ def test_fv_profile_renormalizes_when_not_requested():
     assert score_fv(good, profile="us-core").score < 100.0
 
 
+def test_official_validator_catches_heuristic_holes():
+    """El validador FHIR oficial (fhir.resources R4B) atrapa errores de spec que
+    el validador heurístico casero pasaba por alto — elimina el sesgo de 'juez y
+    parte'. Si la librería no está instalada, el test se omite."""
+    from benchmark_runner import fhir_validate
+    if not fhir_validate.available():
+        import pytest
+        pytest.skip("fhir.resources no instalado; FV usa el fallback heurístico")
+
+    # MedicationRequest sin medication[x] — required en R4, mi heurístico no lo exigía.
+    no_med = {"resource": {"resourceType": "MedicationRequest", "status": "active",
+                           "intent": "order", "subject": {"reference": "Patient/p1"}}}
+    assert score_fv(no_med).score < 50
+
+    # Observation con datatype roto (value no numérico).
+    bad_dt = {"resource": {"resourceType": "Observation", "status": "final",
+                           "code": {"coding": [{"system": "http://loinc.org", "code": "4548-4"}]},
+                           "subject": {"reference": "Patient/p1"},
+                           "valueQuantity": {"value": "siete", "unit": "%"}}}
+    assert score_fv(bad_dt).score < 50
+
+    # Recurso realmente válido -> 100.
+    good = {"resource": {"resourceType": "Observation", "status": "final",
+                         "code": {"coding": [{"system": "http://loinc.org", "code": "4548-4"}]},
+                         "subject": {"reference": "Patient/p1"},
+                         "valueQuantity": {"value": 7.2, "unit": "%",
+                                           "system": "http://unitsofmeasure.org", "code": "%"}}}
+    assert score_fv(good).score == 100
+
+
 def test_fv_gates():
     assert score_fv({"resource": "not-an-object"}).score == 0.0      # capa 1
     assert score_fv({"resource": {"resourceType": "Nope"}}).score == 0.0  # capa 2

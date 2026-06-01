@@ -149,6 +149,17 @@ each layer must pass to score the next:
   for. (Implemented in `benchmark_runner/score_case.py::score_fv`.)
 - Layers 3–6 (and 7 when active) award proportional partial credit.
 
+> **Decision (independence):** structural R4 validity (required elements,
+> cardinality, datatypes, choice types like `value[x]`/`medication[x]`,
+> references) is decided by an **independent official validator** — the
+> `fhir.resources` models, generated from HL7's R4B StructureDefinitions — **not**
+> by a hand-written checker. This removes a "judge and jury" bias: the project
+> that produces the benchmark must not also be the sole authority on what counts
+> as valid FHIR. When the official validator is unavailable, FV falls back to a
+> heuristic (less strict) and records which validator was used. The official
+> structural check is worth 70 pts; terminology binding (layer 5) 20; US Core
+> conformance (layer 7) 10 when requested.
+
 > **Decision:** FV checks **validity and interoperability shape**, not byte
 > equality with a reference resource. Clinical correctness of the *content* of a
 > generated resource is scored separately under CC (e.g. "did the generated
