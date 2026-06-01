@@ -21,7 +21,7 @@
         "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active"}]},
         "verificationStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed"}]},
         "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-category", "code": "problem-list-item"}]}],
-        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "431855005", "display": "Chronic kidney disease stage 3"}], "text": "Chronic kidney disease stage 3"},
+        "code": {"coding": [{"system": "http://snomed.info/sct", "code": "433144002", "display": "Chronic kidney disease stage 3"}], "text": "Chronic kidney disease stage 3"},
         "subject": {"reference": "Patient/pat-008"},
         "onsetDateTime": "2021-06-01",
         "recordedDate": "2025-08-14"
@@ -34,7 +34,7 @@
         "id": "mr-furosemide",
         "status": "active",
         "intent": "order",
-        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "310429", "display": "Furosemide 40 MG Oral Tablet"}], "text": "Furosemide 40 mg"},
+        "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "313988", "display": "Furosemide 40 MG Oral Tablet"}], "text": "Furosemide 40 mg"},
         "subject": {"reference": "Patient/pat-008"},
         "authoredOn": "2025-08-14",
         "encounter": {"reference": "Encounter/enc-030"},

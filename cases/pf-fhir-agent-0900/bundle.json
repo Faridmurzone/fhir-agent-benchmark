@@ -255,7 +255,7 @@
           "coding": [
             {
               "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-              "code": "966224",
+              "code": "966221",
               "display": "Levothyroxine sodium 0.05 MG Oral Tablet"
             }
           ],
@@ -286,7 +286,7 @@
           "coding": [
             {
               "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-              "code": "860975",
+              "code": "861007",
               "display": "Metformin hydrochloride 500 MG Oral Tablet"
             }
           ],
@@ -317,7 +317,7 @@
           "coding": [
             {
               "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-              "code": "402014",
+              "code": "198051",
               "display": "Omeprazole 20 MG Delayed Release Oral Capsule"
             }
           ],

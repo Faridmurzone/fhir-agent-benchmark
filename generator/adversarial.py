@@ -33,23 +33,25 @@ RXNORM = "http://www.nlm.nih.gov/research/umls/rxnorm"
 SNOMED = "http://snomed.info/sct"
 UCUM = "http://unitsofmeasure.org"
 
-# Catálogo ampliado (rxnorm de aspecto válido). Incluye pares de titulación del
-# mismo fármaco a distinta potencia (códigos distintos) como distractores.
+# Catálogo ampliado. Los códigos RxNorm reutilizados en casos publicados están
+# verificados contra RxNav; el resto de este catálogo debe pasar
+# scripts/verify_terminology.py antes de usar sus casos en resultados publicados.
+# Incluye pares de titulación del mismo fármaco a distinta potencia como distractores.
 HARD_MED_CATALOG: list[dict] = [
-    {"rxnorm": "860975", "text": "Metformin 500 mg", "dosage": "500 mg PO BID"},
-    {"rxnorm": "861007", "text": "Metformin 1000 mg", "dosage": "1000 mg PO BID"},
+    {"rxnorm": "861007", "text": "Metformin 500 mg", "dosage": "500 mg PO BID"},
+    {"rxnorm": "861004", "text": "Metformin 1000 mg", "dosage": "1000 mg PO BID"},
     {"rxnorm": "314076", "text": "Lisinopril 10 mg", "dosage": "10 mg PO daily"},
     {"rxnorm": "314077", "text": "Lisinopril 20 mg", "dosage": "20 mg PO daily"},
-    {"rxnorm": "617312", "text": "Atorvastatin 20 mg", "dosage": "20 mg PO QHS"},
+    {"rxnorm": "617310", "text": "Atorvastatin 20 mg", "dosage": "20 mg PO QHS"},
     {"rxnorm": "617314", "text": "Atorvastatin 40 mg", "dosage": "40 mg PO QHS"},
     {"rxnorm": "197361", "text": "Amlodipine 5 mg", "dosage": "5 mg PO daily"},
     {"rxnorm": "197362", "text": "Amlodipine 10 mg", "dosage": "10 mg PO daily"},
     {"rxnorm": "866924", "text": "Metoprolol tartrate 25 mg", "dosage": "25 mg PO BID"},
     {"rxnorm": "866516", "text": "Metoprolol tartrate 50 mg", "dosage": "50 mg PO BID"},
     {"rxnorm": "310798", "text": "Hydrochlorothiazide 25 mg", "dosage": "25 mg PO daily"},
-    {"rxnorm": "966224", "text": "Levothyroxine 50 mcg", "dosage": "50 mcg PO daily"},
+    {"rxnorm": "966221", "text": "Levothyroxine 50 mcg", "dosage": "50 mcg PO daily"},
     {"rxnorm": "892244", "text": "Levothyroxine 75 mcg", "dosage": "75 mcg PO daily"},
-    {"rxnorm": "402014", "text": "Omeprazole 20 mg", "dosage": "20 mg PO daily"},
+    {"rxnorm": "198051", "text": "Omeprazole 20 mg", "dosage": "20 mg PO daily"},
     {"rxnorm": "311354", "text": "Pantoprazole 40 mg", "dosage": "40 mg PO daily"},
     {"rxnorm": "310537", "text": "Glyburide 5 mg", "dosage": "5 mg PO daily"},
     {"rxnorm": "861760", "text": "Sitagliptin 100 mg", "dosage": "100 mg PO daily"},
@@ -260,15 +262,15 @@ def emit_hard_case(out_dir: str | Path, *, seed: int, case_id: str,
 
 # Clases con >=2 miembros (para plantar pares duplicados).
 _CLASSES: dict[str, list[tuple[str, str]]] = {
-    "ACE inhibitor": [("314076", "Lisinopril 10 mg"), ("199351", "Enalapril 10 mg"), ("310405", "Ramipril 5 mg")],
+    "ACE inhibitor": [("314076", "Lisinopril 10 mg"), ("858817", "Enalapril 10 mg"), ("310405", "Ramipril 5 mg")],
     "ARB": [("311036", "Losartan 50 mg"), ("349199", "Valsartan 80 mg")],
-    "PPI": [("402014", "Omeprazole 20 mg"), ("311354", "Pantoprazole 40 mg"), ("389181", "Esomeprazole 40 mg")],
-    "statin": [("617312", "Atorvastatin 20 mg"), ("312961", "Simvastatin 40 mg"), ("301542", "Rosuvastatin 10 mg")],
+    "PPI": [("198051", "Omeprazole 20 mg"), ("311354", "Pantoprazole 40 mg"), ("389181", "Esomeprazole 40 mg")],
+    "statin": [("617310", "Atorvastatin 20 mg"), ("312961", "Simvastatin 40 mg"), ("301542", "Rosuvastatin 10 mg")],
     "beta blocker": [("866516", "Metoprolol 50 mg"), ("197379", "Atenolol 50 mg"), ("200031", "Carvedilol 12.5 mg")],
 }
 # Singletons de clases DISTINTAS (no forman par): distractores.
 _SINGLETONS: list[tuple[str, str]] = [
-    ("860975", "Metformin 500 mg"), ("966224", "Levothyroxine 50 mcg"),
+    ("860975", "Metformin 500 mg"), ("966221", "Levothyroxine 50 mcg"),
     ("351250", "Gabapentin 300 mg"), ("763025", "Furosemide 40 mg"),
     ("905395", "Aspirin 81 mg"), ("855332", "Warfarin 5 mg"),
     ("197361", "Amlodipine 5 mg"), ("861760", "Sitagliptin 100 mg"),

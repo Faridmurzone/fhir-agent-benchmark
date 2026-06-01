@@ -62,7 +62,7 @@ def test_ground_truth_excludes_discontinued():
     excluded_codes = {i["code"]["code"] for i in expected["must_exclude"]}
     assert "310537" in excluded_codes  # glyburide stopped -> excluded
     assert "310537" not in active_codes
-    assert active_codes == {"860975", "314076", "617312"}  # metformin, lisinopril, atorvastatin
+    assert active_codes == {"861007", "314076", "617310"}  # metformin, lisinopril, atorvastatin (RxNorm verificado)
 
 
 # --- Detección de errores (caso roto en tmp) ---

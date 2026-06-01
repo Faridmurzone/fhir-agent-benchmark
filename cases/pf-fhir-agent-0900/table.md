@@ -19,9 +19,9 @@
 | Resource | Medication | RxNorm | Status | authoredOn |
 |----------|------------|--------|--------|------------|
 | `MedicationRequest/mr-lisinopril` | Lisinopril 10 mg | 314076 | active | 2025-01-22 |
-| `MedicationRequest/mr-levothyroxine` | Levothyroxine 50 mcg | 966224 | active | 2025-07-30 |
-| `MedicationRequest/mr-metformin` | Metformin 500 mg | 860975 | active | 2025-01-22 |
-| `MedicationRequest/mr-omeprazole` | Omeprazole 20 mg | 402014 | stopped | 2025-01-22 |
+| `MedicationRequest/mr-levothyroxine` | Levothyroxine 50 mcg | 966221 | active | 2025-07-30 |
+| `MedicationRequest/mr-metformin` | Metformin 500 mg | 861007 | active | 2025-01-22 |
+| `MedicationRequest/mr-omeprazole` | Omeprazole 20 mg | 198051 | stopped | 2025-01-22 |
 
 ## Observations
 | Resource | Observation | Value | Date |

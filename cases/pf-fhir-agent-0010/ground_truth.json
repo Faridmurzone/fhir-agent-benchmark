@@ -12,7 +12,7 @@
       },
       {
         "label": "Metoprolol 50 mg",
-        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "866412"},
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "866514"},
         "status": "active",
         "evidence": ["MedicationRequest/mr-metoprolol"]
       }
@@ -20,7 +20,7 @@
     "must_exclude": [
       {
         "label": "Amoxicillin 500 mg",
-        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "308182"},
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "308191"},
         "reason": "status = completed (7-day course finished 2026-01-22); not currently active",
         "evidence": ["MedicationRequest/mr-amoxicillin"]
       },
@@ -32,7 +32,7 @@
       },
       {
         "label": "Omeprazole 20 mg",
-        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "402014"},
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "198051"},
         "reason": "status = entered-in-error (ordered by mistake on the wrong chart); never a real prescription, must be excluded entirely",
         "evidence": ["MedicationRequest/mr-omeprazole"]
       },

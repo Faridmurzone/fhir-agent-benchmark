@@ -33,7 +33,7 @@ UCUM = "http://unitsofmeasure.org"
 # condición asociada por slug).
 MED_CATALOG: dict[str, dict] = {
     "metformin": {
-        "rxnorm": "860975",
+        "rxnorm": "861007",
         "display": "Metformin hydrochloride 500 MG Oral Tablet",
         "text": "Metformin 500 mg",
         "dosage": "500 mg orally twice daily",
@@ -47,7 +47,7 @@ MED_CATALOG: dict[str, dict] = {
         "treats": "hypertension",
     },
     "atorvastatin": {
-        "rxnorm": "617312",
+        "rxnorm": "617310",
         "display": "Atorvastatin 20 MG Oral Tablet",
         "text": "Atorvastatin 20 mg",
         "dosage": "20 mg orally at night",
@@ -61,7 +61,7 @@ MED_CATALOG: dict[str, dict] = {
         "treats": "hypertension",
     },
     "levothyroxine": {
-        "rxnorm": "966224",
+        "rxnorm": "966221",
         "display": "Levothyroxine sodium 0.05 MG Oral Tablet",
         "text": "Levothyroxine 50 mcg",
         "dosage": "50 mcg orally once daily in the morning",
@@ -82,7 +82,7 @@ MED_CATALOG: dict[str, dict] = {
         "treats": "hypertension",
     },
     "omeprazole": {
-        "rxnorm": "402014",
+        "rxnorm": "198051",
         "display": "Omeprazole 20 MG Delayed Release Oral Capsule",
         "text": "Omeprazole 20 mg",
         "dosage": "20 mg orally once daily before breakfast",

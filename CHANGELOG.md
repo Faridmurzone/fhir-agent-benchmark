@@ -99,6 +99,19 @@ IDs are immutable across versions.
   dependency with a documented heuristic fallback; the result records which
   validator was used.
 
+- **Independent terminology verification** (`scripts/verify_terminology.py`):
+  checks every RxNorm/LOINC/SNOMED coding against official services (RxNav,
+  NLM Clinical Tables, `tx.fhir.org` `$lookup`). Distinguishes INVALID from
+  network-UNKNOWN. Documented in `docs/DATA_INTEGRITY.md`.
+
+### Fixed
+- **Corrected ~10 RxNorm codes + 1 SNOMED code** in the hand-authored data that
+  were plausible but pointed at the wrong drug/strength/form (e.g. `199351` was
+  trandolapril, not enalapril; `617312` was atorvastatin 10 mg, not 20 mg) — the
+  textbook "correlated error" bias a self-authored benchmark is prone to. Caught
+  by the external verifier; data now passes with 0 INVALID. Generator catalogs
+  updated and case `0900` regenerated.
+
 ### Changed
 - **Matching semantics (scoring).** Surfaced by a sanity run: code-only entity
   matching unfairly scored narrative/timeline renderings at 0 (they carry no

@@ -6,7 +6,7 @@
     "items": [
       {
         "label": "Metformin 500 mg",
-        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "860975"},
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "861007"},
         "status": "active",
         "evidence": ["MedicationRequest/mr-metformin"]
       },
@@ -18,7 +18,7 @@
       },
       {
         "label": "Atorvastatin 20 mg",
-        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "617312"},
+        "code": {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "617310"},
         "status": "active",
         "evidence": ["MedicationRequest/mr-atorvastatin"]
       }

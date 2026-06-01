@@ -19,7 +19,7 @@
         "label": "Levothyroxine 50 mcg",
         "code": {
           "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-          "code": "966224"
+          "code": "966221"
         },
         "status": "active",
         "evidence": [
@@ -30,7 +30,7 @@
         "label": "Metformin 500 mg",
         "code": {
           "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-          "code": "860975"
+          "code": "861007"
         },
         "status": "active",
         "evidence": [
@@ -43,7 +43,7 @@
         "label": "Omeprazole 20 mg",
         "code": {
           "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-          "code": "402014"
+          "code": "198051"
         },
         "reason": "status = stopped (Discontinued 2025-07-30 due to inadequate response.)",
         "evidence": [
