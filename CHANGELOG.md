@@ -30,6 +30,13 @@ IDs are immutable across versions.
   safety gate with a critical allergy–medication conflict), `0008` (DQ-01).
 - Deterministic synthetic case generator (`generator/`) for MR-01, plus one
   generated example case `pf-fhir-agent-0900`.
+- Adversarial generator (`generator/adversarial.py`) with **gold by
+  construction**: hard MR-01 at scale (many medications, mixed statuses) and hard
+  MR-03 (find all same-class therapeutic duplications among distractors).
+  Difficulty knobs; fully deterministic. Empirical note: single-shot, single-
+  capability tasks (even at scale) do not break a frontier model (Claude Opus 4.8
+  scored 100); these cases discriminate weaker/open models, while frontier-vs-
+  frontier discrimination will require the agentic/multi-step regime (Phase 4).
 - CLI `score` and `generate` subcommands.
 - Baseline run harness: prompt rendering per input format, model adapters
   (`oracle`, `empty` — credential-free; `anthropic` — gated by API key), a
