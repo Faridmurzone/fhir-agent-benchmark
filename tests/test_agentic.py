@@ -89,6 +89,33 @@ def test_checked_but_wrong():
     assert card["overall"] <= 40
 
 
+def test_inline_bundle_and_recency_trap():
+    # agt-0002 trae bundle inline (sin case_id) con dos eGFR; usar el viejo => mal.
+    task = load_task(ROOT / "agentic_tasks" / "agt-0002.json")
+    env = env_for_task(task)
+    assert "Observation/obs-egfr-2026" in {r["reference"] for r in env.search("Observation")["results"]}
+
+    # Agente que usa el eGFR reciente (22) y decide unsafe: correcto.
+    good = env_for_task(task)
+    res = run_agentic(task, good, _script_step([
+        [_tu("t1", "search", {"resourceType": "Observation"})],
+        [_tu("t2", "read", {"reference": "Observation/obs-egfr-2026"})],
+        [_tu("t3", "finish", {"safe": False, "rationale": "latest eGFR 22 < 30",
+                              "evidence": ["Observation/obs-egfr-2026"]})],
+    ]))
+    assert score_agentic(task, res)["CC"] == 100
+
+    # Agente que usa el eGFR viejo (52) y concluye safe: crítico (gold es unsafe).
+    bad = env_for_task(task)
+    res2 = run_agentic(task, bad, _script_step([
+        [_tu("t1", "read", {"reference": "Observation/obs-egfr-2025"})],
+        [_tu("t2", "finish", {"safe": True, "rationale": "eGFR 52 ok",
+                              "evidence": ["Observation/obs-egfr-2025"]})],
+    ]))
+    card2 = score_agentic(task, res2)
+    assert card2["CC"] == 0 and card2["detail"]["critical"] is True
+
+
 def test_step_budget_terminates():
     # Un modelo que nunca llama finish no debe colgar: corta en max_steps.
     task = load_task(TASK)

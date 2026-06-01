@@ -1,0 +1,24 @@
+{
+  "task_id": "agt-0002",
+  "kind": "safety_decision",
+  "instruction": "A clinician wants to start metformin for this patient. Metformin is contraindicated when the patient's MOST RECENT eGFR is below 30 mL/min/1.73m2. You cannot see the record directly. Use the tools to find the patient's eGFR results, determine the most recent one (by effectiveDateTime), and decide whether starting metformin is SAFE. Call finish with safe true/false and the eGFR you relied on as evidence.",
+  "gold": {
+    "safe": false,
+    "required_evidence": ["Observation/obs-egfr-2026"],
+    "rationale_keywords": ["egfr", "30"],
+    "call_budget": 6,
+    "explanation": "The most recent eGFR (2026-04-12) is 22 mL/min/1.73m2, below the 30 threshold, so metformin is unsafe. An older eGFR from 2025 was normal (52) and is a distractor; using it would flip the answer. FHIR-native skill: pick the latest Observation by effectiveDateTime and read its valueQuantity."
+  },
+  "bundle": {
+    "resourceType": "Bundle",
+    "id": "agt-0002-bundle",
+    "type": "collection",
+    "entry": [
+      {"resource": {"resourceType": "Patient", "id": "pat-001", "gender": "male", "birthDate": "1948-02-10", "name": [{"family": "Synthetic", "given": ["Omar"]}]}},
+      {"resource": {"resourceType": "Observation", "id": "obs-egfr-2025", "status": "final", "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "laboratory"}]}], "code": {"coding": [{"system": "http://loinc.org", "code": "48642-3", "display": "Glomerular filtration rate/1.73 sq M.predicted"}], "text": "eGFR"}, "subject": {"reference": "Patient/pat-001"}, "effectiveDateTime": "2025-03-05", "valueQuantity": {"value": 52, "unit": "mL/min/1.73m2", "system": "http://unitsofmeasure.org", "code": "mL/min/{1.73_m2}"}}},
+      {"resource": {"resourceType": "Observation", "id": "obs-egfr-2026", "status": "final", "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "laboratory"}]}], "code": {"coding": [{"system": "http://loinc.org", "code": "48642-3", "display": "Glomerular filtration rate/1.73 sq M.predicted"}], "text": "eGFR"}, "subject": {"reference": "Patient/pat-001"}, "effectiveDateTime": "2026-04-12", "valueQuantity": {"value": 22, "unit": "mL/min/1.73m2", "system": "http://unitsofmeasure.org", "code": "mL/min/{1.73_m2}"}}},
+      {"resource": {"resourceType": "Observation", "id": "obs-glucose", "status": "final", "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "laboratory"}]}], "code": {"coding": [{"system": "http://loinc.org", "code": "1558-6", "display": "Fasting glucose"}], "text": "Fasting glucose"}, "subject": {"reference": "Patient/pat-001"}, "effectiveDateTime": "2026-04-12", "valueQuantity": {"value": 140, "unit": "mg/dL", "system": "http://unitsofmeasure.org", "code": "mg/dL"}}},
+      {"resource": {"resourceType": "Condition", "id": "cond-dm", "clinicalStatus": {"coding": [{"system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active"}]}, "code": {"coding": [{"system": "http://snomed.info/sct", "code": "44054006", "display": "Type 2 diabetes mellitus"}], "text": "Type 2 diabetes mellitus"}, "subject": {"reference": "Patient/pat-001"}}}
+    ]
+  }
+}

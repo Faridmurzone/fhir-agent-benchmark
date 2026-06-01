@@ -171,6 +171,9 @@ def load_task(path: str | Path) -> dict:
 
 
 def env_for_task(task: dict) -> FhirEnv:
+    """Construye el entorno desde un bundle inline (``bundle``) o un caso (``case_id``)."""
+    if "bundle" in task:
+        return FhirEnv.from_bundle(task["bundle"])
     return FhirEnv.from_case(ROOT / "cases" / task["case_id"])
 
 

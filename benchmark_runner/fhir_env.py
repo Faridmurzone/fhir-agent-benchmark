@@ -29,9 +29,16 @@ def _summary(resource: dict) -> str:
         code = (resource.get("code") or {}).get("text", "?")
         vs = (resource.get("verificationStatus") or {}).get("coding", [{}])[0].get("code", "?")
         return f"allergy to {code} · verification={vs}"
+    if rt == "MedicationStatement":
+        med = (resource.get("medicationCodeableConcept") or {}).get("text", "?")
+        taken = resource.get("status", "?")
+        when = resource.get("effectiveDateTime") or (resource.get("effectivePeriod") or {}).get("start", "?")
+        return f"{med} · status={taken} · effective={when}"
     if rt == "Condition":
         st = (resource.get("clinicalStatus") or {}).get("coding", [{}])[0].get("code", "?")
         return f"{resource['code'].get('text','?')} · clinicalStatus={st}"
+    if rt == "DiagnosticReport":
+        return f"{(resource.get('code') or {}).get('text','?')} · status={resource.get('status','?')}"
     if rt == "Observation":
         return f"{resource['code'].get('text','?')}"
     if rt == "Patient":

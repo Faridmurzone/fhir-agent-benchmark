@@ -57,6 +57,15 @@ IDs are immutable across versions.
   hop agentic safety check does not yet challenge a frontier model (Opus 4.8
   gathered evidence and decided correctly, AE/CC/SF = 100) — multi-hop tasks are
   the next step.
+- Agentic tasks can carry an inline `bundle` (self-contained, no case folder),
+  enabling FHIR resources the single-shot renderers don't cover (e.g.
+  MedicationStatement). 3 multi-hop FHIR-native tasks: `agt-0002` (pick the most
+  recent eGFR by effectiveDateTime → renal contraindication), `agt-0003`
+  (reconcile MedicationRequest order vs MedicationStatement actual use), `agt-0004`
+  (follow MedicationRequest.reasonReference to the Condition and read its
+  clinicalStatus). Empirical note: Opus 4.8 solved all three (100) — frontier
+  FHIR-native read/navigation is at ceiling; discrimination will require
+  generation (FHIR validity) and large-context / missing-data regimes.
 
 ### Changed
 - **Matching semantics (scoring).** Surfaced by a sanity run: code-only entity
