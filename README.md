@@ -94,6 +94,9 @@ python -m benchmark_runner.cli run --model anthropic:claude-opus-4-8  # needs AN
 python -m benchmark_runner.cli run --model openai:gpt-4o              # needs OPENAI_API_KEY
 python -m benchmark_runner.cli run --model gemini:gemini-2.5-flash    # needs GOOGLE_API_KEY
 
+# Run an AGENTIC task (Phase 4): the model must query a FHIR env via tools
+python -m benchmark_runner.cli agentic agentic_tasks/agt-0001.json --model anthropic:claude-opus-4-8
+
 # Run the test suite
 pytest -q
 ```
@@ -174,6 +177,7 @@ fhir-agent-benchmark/
 - [`docs/CONCEPTUAL_DESIGN.md`](docs/CONCEPTUAL_DESIGN.md) — design and prior work.
 - [`docs/TASK_TAXONOMY.md`](docs/TASK_TAXONOMY.md) — what the benchmark measures.
 - [`docs/SCORING.md`](docs/SCORING.md) — how it is scored.
+- [`docs/AGENTIC.md`](docs/AGENTIC.md) — the agentic regime (Phase 4): tools, loop, AE dimension.
 
 ---
 

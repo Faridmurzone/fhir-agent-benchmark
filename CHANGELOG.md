@@ -47,6 +47,17 @@ IDs are immutable across versions.
 - Stability & versioning policy documented in the README (pre-release; results
   only against tagged versions).
 
+- Agentic regime foundation (Phase 4): in-memory read-only FHIR environment
+  (`fhir_env.py`) the agent must query via tools (`list_resource_types`/`search`/
+  `read`/`finish`); a model-agnostic tool-use loop with a step budget; the **AE**
+  (Agentic Execution) dimension scoring evidence recall, efficiency, decision
+  correctness, and a safety gate (concluding "safe" when unsafe, or deciding
+  without inspecting required evidence, is penalized). CLI `agentic`; task format
+  under `agentic_tasks/`; design in `docs/AGENTIC.md`. Empirical note: a single-
+  hop agentic safety check does not yet challenge a frontier model (Opus 4.8
+  gathered evidence and decided correctly, AE/CC/SF = 100) — multi-hop tasks are
+  the next step.
+
 ### Changed
 - **Matching semantics (scoring).** Surfaced by a sanity run: code-only entity
   matching unfairly scored narrative/timeline renderings at 0 (they carry no

@@ -96,6 +96,37 @@ def cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_agentic(args: argparse.Namespace) -> int:
+    from .agentic import (anthropic_step_fn, env_for_task, load_task,
+                          run_agentic, score_agentic)
+
+    if not args.model.startswith("anthropic"):
+        print("Por ahora el régimen agéntico solo soporta --model anthropic[:<model>].",
+              file=sys.stderr)
+        return 1
+    import os
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        print("Falta ANTHROPIC_API_KEY.", file=sys.stderr)
+        return 1
+
+    task = load_task(args.task)
+    env = env_for_task(task)
+    model = args.model.split(":", 1)[1] if ":" in args.model else "claude-opus-4-8"
+    result = run_agentic(task, env, anthropic_step_fn(model), max_steps=args.max_steps)
+    card = score_agentic(task, result)
+
+    print(f"Tarea {task['task_id']} · modelo {model} · {result['n_calls']} llamadas")
+    print("Trace:")
+    for t in result["trace"]:
+        print(f"  - {t['tool']}({t['input']})")
+    print(f"Decisión: safe={(result.get('answer') or {}).get('safe')}")
+    for dim in ("CC", "AE", "SF"):
+        print(f"  {dim:3} {round(card[dim])}")
+    print(f"  Overall {card['overall']}"
+          + ("  ⚠️ crítico" if card["detail"]["critical"] else ""))
+    return 0
+
+
 def cmd_generate(args: argparse.Namespace) -> int:
     from generator.emit_case import emit_case
 
@@ -131,6 +162,12 @@ def main(argv: list[str] | None = None) -> int:
     p_run.add_argument("--cases-dir", default=None)
     p_run.add_argument("--out", default=None, help="Carpeta de resultados (default: results/)")
     p_run.set_defaults(func=cmd_run)
+
+    p_ag = sub.add_parser("agentic", help="Corre una tarea agéntica (Fase 4) con tool-use")
+    p_ag.add_argument("task", help="Ruta a agentic_tasks/<id>.json")
+    p_ag.add_argument("--model", default="anthropic:claude-opus-4-8")
+    p_ag.add_argument("--max-steps", type=int, default=8)
+    p_ag.set_defaults(func=cmd_agentic)
 
     p_gen = sub.add_parser("generate", help="Genera un caso sintético (MR-01)")
     p_gen.add_argument("--out", required=True, help="Carpeta destino del caso")
