@@ -60,13 +60,15 @@ def run_case_sampled(adapter: Adapter, case_dir: str | Path, n_samples: int) -> 
     overalls = [c["overall"] for c in scored]
     mean = sum(overalls) / len(overalls)
     var = sum((o - mean) ** 2 for o in overalls) / len(overalls)
+    n_perfect = sum(1 for o in overalls if o >= 100)
     base = dict(base)
     base.update({
         "overall": round(mean),
         "overall_mean": mean,
         "overall_std": round(var ** 0.5, 1),
-        "overall_min": min(overalls),
+        "overall_min": min(overalls),          # peor caso: lo que ves en producción
         "overall_max": max(overalls),
+        "pass_rate": round(100 * n_perfect / len(scored)),  # % de corridas perfectas
         "n_samples": len(scored),
         "samples": overalls,
     })
@@ -88,8 +90,11 @@ def run_model(adapter: Adapter, cases_dir: str | Path | None = None,
     scored = [c for c in per_case if c.get("error") is None]
     aggregate = aggregate_model(scored)
     errored = [c for c in per_case if c.get("error") is not None]
-    # Varianza media entre casos (solo informativa cuando n_samples > 1).
+    # Métricas de consistencia (cuando n_samples > 1): lo que predice errores
+    # de producción mejor que la media — tasa de aprobación y peor caso.
     stds = [c["overall_std"] for c in scored if c.get("overall_std") is not None]
+    prates = [c["pass_rate"] for c in scored if c.get("pass_rate") is not None]
+    worst = [c["overall_min"] for c in scored if c.get("overall_min") is not None]
     return {
         "model": adapter.name,
         "aggregate": aggregate,
@@ -98,6 +103,8 @@ def run_model(adapter: Adapter, cases_dir: str | Path | None = None,
         "n_scored": len(scored),
         "n_samples": n_samples,
         "mean_overall_std": round(sum(stds) / len(stds), 1) if stds else 0.0,
+        "pass_rate": round(sum(prates) / len(prates)) if prates else None,
+        "worst_case": min(worst) if worst else None,
     }
 
 

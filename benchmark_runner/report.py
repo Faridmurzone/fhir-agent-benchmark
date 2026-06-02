@@ -32,6 +32,18 @@ def build_report(results: dict) -> str:
         lines.append(f"| {label} | {_fmt(agg.get(dim))}{gate} |")
     lines.append(f"| **Overall** | **{_fmt(agg.get('overall'))}** |")
 
+    # Consistencia (cuando hubo múltiples muestras): predice errores de
+    # producción mejor que la media — tasa de aprobación y peor caso.
+    if results.get("n_samples", 1) > 1:
+        lines.append("\n## Consistency (multi-sample)\n")
+        lines.append(f"- **Samples per case:** {results['n_samples']}")
+        lines.append(f"- **Pass rate** (runs scoring 100): **{_fmt(results.get('pass_rate'))}%**")
+        lines.append(f"- **Worst-case overall** (any case, any run): **{_fmt(results.get('worst_case'))}**")
+        lines.append(f"- **Mean per-case variance (std):** {results.get('mean_overall_std')}")
+        lines.append("\n> A high mean with a low pass rate / low worst-case is the "
+                     "signature of a model that is *usually* right but fails intermittently — "
+                     "the production error a mean score hides.")
+
     # Por familia.
     lines.append("\n## By family\n")
     lines.append("| Family | Cases | CC | FV | SF | TRC | SR | Overall |")

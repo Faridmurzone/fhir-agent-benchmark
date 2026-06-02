@@ -82,14 +82,18 @@ def cmd_run(args: argparse.Namespace) -> int:
               "Probá --model oracle o --model empty.", file=sys.stderr)
         return 1
 
-    results = run_model(adapter, args.cases_dir)
+    results = run_model(adapter, args.cases_dir, n_samples=args.samples)
     json_path, md_path = write_results(results, args.out)
     agg = results["aggregate"]
-    print(f"Modelo: {results['model']} · {agg.get('n_cases', 0)} casos")
+    print(f"Modelo: {results['model']} · {agg.get('n_cases', 0)} casos"
+          + (f" · {args.samples} muestras/caso" if args.samples > 1 else ""))
     for dim in ("CC", "FV", "SF", "TRC", "SR"):
         v = agg.get(dim)
         print(f"  {dim:4} {'· n/a' if v is None else round(v):>4}")
     print(f"  Overall {round(agg['overall']) if agg.get('overall') is not None else 'n/a'}")
+    if args.samples > 1:
+        print(f"  Pass-rate {results.get('pass_rate')}%  ·  peor caso {results.get('worst_case')}"
+              f"  ·  varianza media {results.get('mean_overall_std')}")
     if results.get("n_errored"):
         print(f"  ⚠️ {results['n_errored']} caso(s) con error (excluidos del score)")
     print(f"Reporte: {md_path}")
@@ -158,9 +162,11 @@ def main(argv: list[str] | None = None) -> int:
 
     p_run = sub.add_parser("run", help="Corre un modelo contra el benchmark y emite un reporte")
     p_run.add_argument("--model", default="oracle",
-                       help="oracle | empty | anthropic[:<model>]")
+                       help="oracle | empty | anthropic|openai|gemini[:<model>]")
     p_run.add_argument("--cases-dir", default=None)
     p_run.add_argument("--out", default=None, help="Carpeta de resultados (default: results/)")
+    p_run.add_argument("--samples", type=int, default=1,
+                       help="muestras por caso (>1 mide pass-rate y peor caso)")
     p_run.set_defaults(func=cmd_run)
 
     p_ag = sub.add_parser("agentic", help="Corre una tarea agéntica (Fase 4) con tool-use")
