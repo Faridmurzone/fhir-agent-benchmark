@@ -139,7 +139,7 @@ class OpenAIAdapter:
     """Adaptador para OpenAI (GPT). Gated por OPENAI_API_KEY."""
 
     def __init__(self, model: str | None = None):
-        self.model = model or os.getenv("OPENAI_MODEL", "gpt-4o")
+        self.model = model or os.getenv("OPENAI_MODEL", "gpt-5.5")
         self.name = f"openai:{self.model}"
         self._client = None
         key = os.getenv("OPENAI_API_KEY")
@@ -160,14 +160,23 @@ class OpenAIAdapter:
             raise RuntimeError("OpenAIAdapter no disponible (falta OPENAI_API_KEY o SDK)")
         from .prompts import system_prompt
 
-        resp = self._client.chat.completions.create(  # type: ignore[union-attr]
-            model=self.model,
-            max_tokens=1500,
-            messages=[
-                {"role": "system", "content": system_prompt()},
-                {"role": "user", "content": prompt},
-            ],
-        )
+        messages = [
+            {"role": "system", "content": system_prompt()},
+            {"role": "user", "content": prompt},
+        ]
+        # Los modelos GPT-5.x / o-series usan `max_completion_tokens` (y no
+        # aceptan `max_tokens`); los GPT-4.x usan `max_tokens`. Probamos el nuevo
+        # parámetro y caemos al viejo si el modelo lo rechaza.
+        budget = 4000  # los modelos razonadores gastan tokens en reasoning
+        try:
+            resp = self._client.chat.completions.create(  # type: ignore[union-attr]
+                model=self.model, max_completion_tokens=budget, messages=messages)
+        except Exception as exc:
+            if "max_completion_tokens" in str(exc) or "max_tokens" in str(exc):
+                resp = self._client.chat.completions.create(  # type: ignore[union-attr]
+                    model=self.model, max_tokens=1500, messages=messages)
+            else:
+                raise
         return parse_model_json(resp.choices[0].message.content or "")
 
 
@@ -175,7 +184,7 @@ class GeminiAdapter:
     """Adaptador para Google Gemini. Gated por GOOGLE_API_KEY."""
 
     def __init__(self, model: str | None = None):
-        self.model = model or os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.model = model or os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
         self.name = f"gemini:{self.model}"
         self._client = None
         key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")

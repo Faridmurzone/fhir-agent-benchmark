@@ -9,6 +9,12 @@ IDs are immutable across versions.
 ## [Unreleased]
 
 ### Added
+- **Multi-sample runs** (`run_model(n_samples=N)`, `run_case_sampled`): each case
+  is run N times and the scorecard reports overall mean / std / min / max. Needed
+  because models (especially fast tiers) are non-deterministic — a single run is
+  not a reliable score. A cross-vendor sanity run showed Gemini 2.5 Flash dropping
+  to 41–61 on cases it scored 100 on re-runs, i.e. temporal variance, not a real
+  capability gap; multi-sampling distinguishes the two.
 - Foundation docs: README, VISION, ROADMAP, CONCEPTUAL_DESIGN.
 - Task taxonomy v0.1: 6 families, 36 capabilities (28 core + 8 ext), with stable IDs.
 - Scoring methodology v0.1: 6 dimensions, safety as a multiplicative gate,
@@ -44,6 +50,14 @@ IDs are immutable across versions.
   report. CLI `run` subcommand; results written to `results/` (gitignored).
 - Vendor-neutral model adapters: `anthropic` (Claude), `openai` (GPT), `gemini`
   (Google) — all gated by their API key. Selectable as `--model <vendor>:<model>`.
+  Defaults updated to current models (`claude-opus-4-8`, `gpt-5.5`,
+  `gemini-3.5-flash`); the OpenAI adapter uses `max_completion_tokens` for
+  GPT-5.x/o-series with a fallback to `max_tokens` for GPT-4.x.
+- Cross-vendor bias check (n=3, current models): Gemini 3.5 Flash 100 / Opus 4.8
+  99 / GPT-5.5 97 — the benchmark's author model (Opus) does **not** top the
+  ranking, evidence against self-authoring bias. Single-run variance is large
+  (GPT models swing 61–100 on some MR-01/PU-01 cases), which is why multi-sampling
+  is required; results not published (pre-`v0.1.0`).
 - Stability & versioning policy documented in the README (pre-release; results
   only against tagged versions).
 
