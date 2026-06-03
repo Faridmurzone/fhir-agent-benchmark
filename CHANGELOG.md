@@ -15,6 +15,10 @@ IDs are immutable across versions.
   not a reliable score. A cross-vendor sanity run showed Gemini 2.5 Flash dropping
   to 41–61 on cases it scored 100 on re-runs, i.e. temporal variance, not a real
   capability gap; multi-sampling distinguishes the two.
+- `docs/METHODOLOGY_LESSONS.md`: the scorer/data/validator — not the model — is
+  the main bias risk; three documented instances (wrong RxNorm codes, lenient
+  home-grown validator, substring scorer fabricating failures) and the
+  independent-oracle defense for each. `STATUS.md`: working done/pending log.
 - Foundation docs: README, VISION, ROADMAP, CONCEPTUAL_DESIGN.
 - Task taxonomy v0.1: 6 families, 36 capabilities (28 core + 8 ext), with stable IDs.
 - Scoring methodology v0.1: 6 dimensions, safety as a multiplicative gate,

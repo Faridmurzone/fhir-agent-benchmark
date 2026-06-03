@@ -179,6 +179,7 @@ fhir-agent-benchmark/
 - [`docs/SCORING.md`](docs/SCORING.md) — how it is scored.
 - [`docs/AGENTIC.md`](docs/AGENTIC.md) — the agentic regime (Phase 4): tools, loop, AE dimension.
 - [`docs/DATA_INTEGRITY.md`](docs/DATA_INTEGRITY.md) — independent validation of FHIR validity and terminology codes against official sources.
+- [`docs/METHODOLOGY_LESSONS.md`](docs/METHODOLOGY_LESSONS.md) — why the scorer, not the model, is the main bias risk (3 documented instances).
 
 ---
 
