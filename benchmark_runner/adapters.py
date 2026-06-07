@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 from typing import Protocol
 
 from .load_case import Case
@@ -78,20 +77,28 @@ class OracleAdapter:
         return {}
 
 
-_JSON_BLOCK = re.compile(r"\{.*\}", re.DOTALL)
-
-
 def parse_model_json(text: str) -> dict:
-    """Extrae el primer objeto JSON de la respuesta del modelo (tolera ```fences```)."""
+    """Extrae el primer objeto JSON de la respuesta del modelo (tolera ```fences```).
+
+    Usa ``raw_decode`` para tomar el PRIMER objeto JSON completo a partir de la
+    primera ``{``, ignorando lo que venga después. Esto tolera dos defectos
+    comunes de serialización que de otro modo el scorer convertiría en un 0
+    espurio (sesgo del instrumento, no del modelo — METHODOLOGY_LESSONS):
+      - prosa o texto extra después del JSON,
+      - una llave de cierre de más al final (observado en GPT-5.5: ``...}}}``).
+    Antes el regex greedy ``\\{.*\\}`` capturaba hasta la ÚLTIMA llave, así que
+    una ``}`` sobrante invalidaba todo el objeto.
+    """
     text = text.strip()
     if text.startswith("```"):
         text = text.strip("`")
         text = text[text.find("{"):] if "{" in text else text
-    m = _JSON_BLOCK.search(text)
-    if not m:
+    start = text.find("{")
+    if start == -1:
         return {}
     try:
-        return json.loads(m.group(0))
+        obj, _ = json.JSONDecoder().raw_decode(text[start:])
+        return obj if isinstance(obj, dict) else {}
     except json.JSONDecodeError:
         return {}
 

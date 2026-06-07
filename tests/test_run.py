@@ -102,3 +102,13 @@ def test_parse_model_json_with_fences():
     assert parse_model_json('```json\n{"items": []}\n```') == {"items": []}
     assert parse_model_json('Sure!\n{"flags": [{"type": "x"}]}\ndone') == {"flags": [{"type": "x"}]}
     assert parse_model_json("no json here") == {}
+
+
+def test_parse_model_json_tolerates_trailing_garbage():
+    # GPT-5.5 emite a veces una llave de cierre de más: el objeto válido está
+    # completo y no debe convertirse en un 0 espurio (sesgo del instrumento).
+    assert parse_model_json('{"resource": {"resourceType": "Patient"}}}') == {
+        "resource": {"resourceType": "Patient"}
+    }
+    # Prosa después del JSON tampoco debe romper el parseo.
+    assert parse_model_json('{"value": 1} and here is why...') == {"value": 1}
