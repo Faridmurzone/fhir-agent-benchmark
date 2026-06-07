@@ -23,7 +23,8 @@
         "label_fallback": {"type": "boolean", "default": false},
         "date_granularity": {"type": "string", "enum": ["year", "month", "day", "instant"], "default": "day"},
         "code_systems_priority": {"type": "array", "items": {"type": "string"}},
-        "profile": {"type": "string", "enum": ["us-core"], "description": "Activates FV layer-7 profile conformance for generation cases."}
+        "profile": {"type": "string", "enum": ["us-core"], "description": "Activates FV layer-7 profile conformance for generation cases."},
+        "fhir_version": {"type": "string", "enum": ["R4", "R5"], "default": "R4", "description": "FHIR version the generated resource must validate against (FV). R4 uses the R4B official models; R5 the R5 ones (e.g. TX-05 migration)."}
       }
     },
     "weights_override": {

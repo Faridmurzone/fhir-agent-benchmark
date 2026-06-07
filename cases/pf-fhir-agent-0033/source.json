@@ -1,0 +1,15 @@
+{
+  "msg_type": "ORU_R01",
+  "sending_app": "ACME-LIS v3.2",
+  "mrn": "pat-001",
+  "visit_id": "enc-001",
+  "panel": "RENAL",
+  "test_cd": "CREA",
+  "test_desc": "Creatinine, serum",
+  "result_value": "1.1",
+  "result_units": "mg/dL",
+  "ref_range": "0.7-1.3",
+  "abnormal_flag": "",
+  "result_status": "F",
+  "collected_dt": "20260520"
+}

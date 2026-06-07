@@ -1,0 +1,39 @@
+{
+  "case_id": "pf-fhir-agent-0034",
+  "capability_id": "TX-05",
+  "output_contract": "fhir_resource",
+  "expected": {
+    "assertions": [
+      {"path": "resourceType", "equals": "MedicationRequest"},
+      {"path": "status", "equals": "active"},
+      {"path": "intent", "equals": "order"},
+      {"path": "medication.concept.coding[*].system", "equals": "http://www.nlm.nih.gov/research/umls/rxnorm"},
+      {"path": "medication.concept.coding[*].code", "equals": "314076"},
+      {"path": "subject.reference", "equals": "Patient/pat-001"},
+      {"path": "authoredOn", "equals": "2026-05-20"}
+    ],
+    "evidence": ["Patient/pat-001"],
+    "reference_resource": {
+      "resourceType": "MedicationRequest",
+      "id": "medrx-r5-001",
+      "status": "active",
+      "intent": "order",
+      "medication": {
+        "concept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "314076",
+              "display": "lisinopril 10 MG Oral Tablet"
+            }
+          ]
+        }
+      },
+      "subject": {"reference": "Patient/pat-001"},
+      "authoredOn": "2026-05-20",
+      "dosageInstruction": [{"text": "10 mg orally once daily"}]
+    }
+  },
+  "safety_events": [],
+  "notes": "TX-05: migración de versión R4 -> R5. El cambio estructural clave es medication[x] (medicationCodeableConcept) -> medication CodeableReference {concept}. FV valida contra los modelos R5 oficiales (options.fhir_version=R5): un output que conserve la forma R4 falla la validación R5 (verificado: 2 errores), y un R5 correcto pasa. La aserción medication.concept.coding[*].code verifica que el contenido clínico (RxNorm 314076) sobrevivió la migración."
+}

@@ -1,0 +1,17 @@
+{
+  "resourceType": "Bundle",
+  "id": "pf-fhir-agent-0034-bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "Patient/pat-001",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-001",
+        "gender": "male",
+        "birthDate": "1968-03-14",
+        "name": [{"family": "Synthetic", "given": ["Luis"]}]
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "case_id": "pf-fhir-agent-0031",
+  "capability_id": "TX-02",
+  "output_contract": "fhir_resource",
+  "expected": {
+    "assertions": [
+      {"path": "resourceType", "equals": "Condition"},
+      {"path": "clinicalStatus.coding[*].code", "equals": "active"},
+      {"path": "verificationStatus.coding[*].code", "equals": "confirmed"},
+      {"path": "code.coding[*].system", "equals": "http://snomed.info/sct"},
+      {"path": "code.coding[*].code", "equals_any": ["59621000", "38341003"]},
+      {"path": "subject.reference", "equals": "Patient/pat-001"},
+      {"path": "recordedDate", "equals": "2026-05-22"}
+    ],
+    "evidence": ["Patient/pat-001"],
+    "reference_resource": {
+      "resourceType": "Condition",
+      "id": "cond-htn-tx",
+      "clinicalStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            "code": "active"
+          }
+        ]
+      },
+      "verificationStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+            "code": "confirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "59621000",
+            "display": "Essential hypertension"
+          }
+        ],
+        "text": "Essential hypertension"
+      },
+      "subject": {"reference": "Patient/pat-001"},
+      "recordedDate": "2026-05-22"
+    }
+  },
+  "safety_events": [],
+  "notes": "TX-02: texto plano -> FHIR sin guía. El modelo decide resourceType (Condition) y el código SNOMED de memoria. equals_any acepta 59621000 (Essential hypertension, preciso) y 38341003 (Hypertensive disorder, más general pero defendible) — tolerancia deliberada contra fallas falsas del scorer (METHODOLOGY_LESSONS §3). onsetDateTime NO se aserta: la nota no fija onset clínico inequívoco."
+}

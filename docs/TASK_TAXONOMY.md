@@ -18,7 +18,7 @@ once published; they are never reused or renumbered.
 The taxonomy has three levels:
 
 ```
-Family            (6)    e.g. Patient Understanding
+Family            (7)    e.g. Patient Understanding
   └─ Capability   (~30)  e.g. PU-01 Active Conditions
        └─ Case    (many) e.g. pf-fhir-agent-0001
 ```
@@ -60,6 +60,7 @@ Each capability is tagged with:
 | `FG` | FHIR Generation |
 | `DQ` | Data Quality |
 | `SA` | Safety |
+| `TX` | Transformation & Mapping |
 
 Every capability also has a machine slug used in `task.json` (e.g.
 `patient_understanding.active_conditions`).
@@ -189,6 +190,43 @@ capabilities.
 > case lacks the data required to answer safely (SA-03/SA-04), the correct output
 > is an explicit, justified refusal — not a guess. The output contract
 > `abstention` and the Safety dimension encode this (see `SCORING.md`).
+
+---
+
+## Family 7 — Transformation & Mapping (`TX`)
+
+*Can the agent turn **non-FHIR input** — a proprietary vendor JSON export or a
+plain-text clinical note — into correct, valid FHIR?* This is the dominant
+real-world integration task: the input does not tell you which resource to
+produce, which fields map where, or which codes to use. The agent must decide
+all of that itself.
+
+The contrast with `FG` is deliberate: FG instructions **dictate** the target
+resource type, codes, and field values (they measure assembly); TX instructions
+**withhold** them (they measure resource-type identification, field mapping,
+terminology selection from memory, vocabulary mapping — e.g. a vendor status
+`"F"` → `final`, `sex: "M"` → `male` — and conformance decisions).
+
+| ID | Capability | Slug | Tier | Diff | Output | Dimensions |
+|----|------------|------|------|------|--------|------------|
+| TX-01 | Non-standard JSON → FHIR Resource | `json_to_fhir_resource` | core | L2 | `fhir_resource` | CC, FV, TRC |
+| TX-02 | Plain Text → FHIR Resource (un-guided) | `text_to_fhir_unguided` | core | L2 | `fhir_resource` | CC, FV, TRC |
+| TX-03 | Non-standard Export → FHIR Bundle | `json_to_fhir_bundle` | core | L3 | `fhir_bundle` | CC, FV, TRC |
+| TX-04 | IG-conformant Transformation (un-guided US Core) | `ig_conformance_unguided` | core | L3 | `fhir_resource` | CC, FV, TRC |
+| TX-05 | R4 → R5 Version Migration | `r4_to_r5_migration` | ext | L3 | `fhir_resource` | CC, FV, TRC |
+
+**Why it matters:** in production, "generate FHIR" almost never means "fill in
+the fields I dictate" — it means "here is a LIS/EHR export or a note; produce
+the right resources." TX-04 additionally tests whether the model knows an
+implementation guide (US Core) *from memory* — the case asks for conformance
+without providing the profile URL or required bindings. TX-05 tests version
+migration (e.g. R4 `medication[x]` → R5 `medication` CodeableReference), scored
+against the official R5 models.
+
+> **Scoring note (anti-bias):** un-guided coding can have more than one
+> defensible answer. Where legitimate alternatives exist, ground truth uses
+> `equals_any` assertions instead of a single `equals` — a deliberate guard
+> against the false-failure mode documented in `METHODOLOGY_LESSONS.md` §3.
 
 ---
 

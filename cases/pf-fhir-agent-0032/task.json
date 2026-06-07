@@ -1,0 +1,19 @@
+{
+  "case_id": "pf-fhir-agent-0032",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "TX-03",
+    "slug": "transformation.json_to_fhir_bundle"
+  },
+  "language": "en",
+  "scenario": "Transform a non-FHIR EHR chart extract (demographics + lab panel) into a FHIR R4 Bundle with internally consistent references, deciding all resource types and field mappings.",
+  "instruction": "The input below is a non-FHIR JSON extract from a proprietary EHR. Transform it into a single FHIR R4 Bundle of type 'collection' containing: (a) one Patient resource — use the mrn as the resource id and map the demographic fields to the correct FHIR elements and value sets — and (b) one laboratory Observation per lab result, each coded with the standard terminology for laboratory tests, units in UCUM, the vendor result status mapped to FHIR, and subject referencing the bundled patient. You decide every field mapping yourself. Respond with only the JSON object {\"resource\": { \"resourceType\": \"Bundle\", ... }}.",
+  "output_contract": "fhir_bundle",
+  "available_renderings": ["source_json"],
+  "rendering_files": {
+    "source_json": "source.json"
+  },
+  "resource_types": ["Patient"],
+  "tags": ["transformation", "json-to-fhir", "bundle", "un-guided", "loinc", "vocab-mapping", "hard"]
+}

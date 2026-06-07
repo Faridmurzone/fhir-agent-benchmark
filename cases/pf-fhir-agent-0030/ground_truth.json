@@ -1,0 +1,71 @@
+{
+  "case_id": "pf-fhir-agent-0030",
+  "capability_id": "TX-01",
+  "output_contract": "fhir_resource",
+  "expected": {
+    "assertions": [
+      {"path": "resourceType", "equals": "Observation"},
+      {"path": "status", "equals": "final"},
+      {"path": "code.coding[*].system", "equals": "http://loinc.org"},
+      {"path": "code.coding[*].code", "equals": "2345-7"},
+      {"path": "subject.reference", "equals": "Patient/pat-001"},
+      {"path": "encounter.reference", "equals": "Encounter/enc-001"},
+      {"path": "effectiveDateTime", "equals": "2026-05-20"},
+      {"path": "valueQuantity.value", "equals": 105},
+      {"path": "valueQuantity.code", "equals": "mg/dL"}
+    ],
+    "evidence": ["Patient/pat-001", "Encounter/enc-001"],
+    "reference_resource": {
+      "resourceType": "Observation",
+      "id": "obs-glu-tx",
+      "status": "final",
+      "category": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+              "code": "laboratory"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2345-7",
+            "display": "Glucose [Mass/volume] in Serum or Plasma"
+          }
+        ],
+        "text": "Glucose, serum"
+      },
+      "subject": {"reference": "Patient/pat-001"},
+      "encounter": {"reference": "Encounter/enc-001"},
+      "effectiveDateTime": "2026-05-20",
+      "valueQuantity": {
+        "value": 105,
+        "unit": "mg/dL",
+        "system": "http://unitsofmeasure.org",
+        "code": "mg/dL"
+      },
+      "interpretation": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+              "code": "H"
+            }
+          ]
+        }
+      ],
+      "referenceRange": [
+        {
+          "low": {"value": 70, "unit": "mg/dL", "system": "http://unitsofmeasure.org", "code": "mg/dL"},
+          "high": {"value": 99, "unit": "mg/dL", "system": "http://unitsofmeasure.org", "code": "mg/dL"}
+        }
+      ]
+    }
+  },
+  "safety_events": [],
+  "notes": "TX-01: la instrucción NO dicta resourceType, código LOINC ni mapeos — el modelo decide. Mide: identificación de recurso (Observation), selección de LOINC de memoria (Glucose serum mass/vol -> 2345-7, forzado por las unidades mg/dL), mapeo de vocabulario del vendor (F -> final), conversión de fecha (20260520 -> 2026-05-20) y referencias desde identificadores fuente. interpretation/referenceRange/category NO se asertan a propósito (válidos pero opcionales en R4 base): asertarlos fabricaría fallas falsas (METHODOLOGY_LESSONS §3)."
+}

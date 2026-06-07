@@ -1,0 +1,19 @@
+{
+  "case_id": "pf-fhir-agent-0033",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "TX-04",
+    "slug": "transformation.ig_conformance_unguided"
+  },
+  "language": "en",
+  "scenario": "Transform a proprietary lab export into a FHIR R4 Observation conforming to US Core — without being given the profile URL, required bindings, or category system.",
+  "instruction": "Transform the proprietary lab export below into a FHIR R4 Observation that CONFORMS TO the US Core Laboratory Result Observation profile. The profile details are intentionally NOT provided: declare the correct canonical US Core profile URL in meta.profile and satisfy the profile's required elements (including the required category with its standard system and code) from your own knowledge of the implementation guide. Code the test with the standard laboratory terminology, units in UCUM, map the vendor status and date format to FHIR, and reference the patient as Patient/pat-001 and the encounter as Encounter/enc-001. Respond with only the JSON object {\"resource\": { ... }}.",
+  "output_contract": "fhir_resource",
+  "available_renderings": ["source_json"],
+  "rendering_files": {
+    "source_json": "source.json"
+  },
+  "resource_types": ["Patient", "Encounter"],
+  "tags": ["transformation", "json-to-fhir", "us-core", "implementation-guide", "un-guided", "hard"]
+}

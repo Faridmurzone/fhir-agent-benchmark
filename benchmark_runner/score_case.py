@@ -162,18 +162,26 @@ def _resolve_path(obj: Any, path: str) -> tuple[bool, Any]:
 
 
 def _score_assertions(resource: dict, assertions: list[dict], date_gran: str) -> metrics.MetricResult:
-    """CC de generación: fracción de aserciones {path, equals} que se cumplen."""
+    """CC de generación: fracción de aserciones que se cumplen.
+
+    Cada aserción es {path, equals} o {path, equals_any: [...]}. `equals_any`
+    existe para tareas un-guided (familia TX) donde más de una codificación es
+    defendible: asertar un único código fabricaría fallas falsas
+    (METHODOLOGY_LESSONS §3 — el sesgo está en el scorer).
+    """
     results = []
     for a in assertions:
-        path, expected_val = a.get("path"), a.get("equals")
+        path = a.get("path")
+        candidates = a["equals_any"] if "equals_any" in a else [a.get("equals")]
         found, val = _resolve_path(resource, path)
         if not found:
             ok = False
         elif isinstance(val, list):  # wildcard: pertenencia
-            ok = any(_value_eq(v, expected_val, date_gran) for v in val)
+            ok = any(_value_eq(v, c, date_gran) for v in val for c in candidates)
         else:
-            ok = _value_eq(val, expected_val, date_gran)
-        results.append({"path": path, "expected": expected_val, "ok": ok})
+            ok = any(_value_eq(val, c, date_gran) for c in candidates)
+        expected_repr = candidates if "equals_any" in a else candidates[0]
+        results.append({"path": path, "expected": expected_repr, "ok": ok})
     n = len(results)
     passed = sum(1 for r in results if r["ok"])
     score = 100.0 * passed / n if n else 0.0
@@ -473,7 +481,8 @@ US_CORE_PROFILES: dict[str, dict] = {
 }
 
 
-def score_fv(model_output: dict, profile: str | None = None) -> metrics.MetricResult:
+def score_fv(model_output: dict, profile: str | None = None,
+             fhir_version: str = "R4") -> metrics.MetricResult:
     """Validador FHIR estructural (v0.1).
 
     Capas (ver docs/SCORING.md):
@@ -490,6 +499,9 @@ def score_fv(model_output: dict, profile: str | None = None) -> metrics.MetricRe
     caso no pide. Si ``profile`` == "us-core", la capa 7 valida conformidad
     US Core (meta.profile + must-support + bindings) y el techo de 100 exige
     cumplirla.
+
+    ``fhir_version`` ("R4" default | "R5") selecciona los modelos oficiales
+    contra los que valida la capa estructural (casos de migración, TX-05).
     """
     resource = (model_output or {}).get("resource")
 
@@ -511,10 +523,11 @@ def score_fv(model_output: dict, profile: str | None = None) -> metrics.MetricRe
     # referencias): si hay un validador FHIR OFICIAL disponible, es la autoridad
     # (no nuestro heurístico). Vale 70 pts y es binario por elemento del spec.
     if _fhir_validate.available():
-        ok, errs = _fhir_validate.validate(resource)
+        ok, errs = _fhir_validate.validate(resource, version=fhir_version)
         layer_struct = 70.0 if ok else 0.0
         score += layer_struct
-        detail["structural_official"] = {"validator": "fhir.resources R4B", "valid": ok,
+        validator_name = "fhir.resources R5" if fhir_version == "R5" else "fhir.resources R4B"
+        detail["structural_official"] = {"validator": validator_name, "valid": ok,
                                           "errors": errs, "points": layer_struct}
     else:
         # Fallback heurístico (sin la librería): capas 3 (30) + 4 (25) + 6 (15).
@@ -749,8 +762,9 @@ def score_rendering(
         result["critical_uncaught"] = False
 
     if "FV" in dims or contract in ("fhir_resource", "fhir_bundle"):
-        profile = _options(scoring_cfg).get("profile")
-        fv = score_fv(model_output, profile=profile)
+        opts = _options(scoring_cfg)
+        fv = score_fv(model_output, profile=opts.get("profile"),
+                      fhir_version=opts.get("fhir_version", "R4"))
         result["FV"] = fv.score
         result["FV_detail"] = fv.detail
 

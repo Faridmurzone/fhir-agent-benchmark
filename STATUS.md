@@ -1,14 +1,15 @@
 # Project Status — FHIR Agent Benchmark
 
-> Working status to resume later. Updated 2026-06-03. Not part of the published
+> Working status to resume later. Updated 2026-06-07. Not part of the published
 > spec; a scratchpad of what's done and what's next.
 
 ## TL;DR
 
-Pre-release (`v0.1`, no tag yet). The harness is fully runnable: 15 cases, a
-multi-dimensional scorer with an **independent** FHIR validator, terminology
-verified against official sources, three vendor adapters (current models),
-agentic regime, multi-sample / pass-rate metrics. 61 tests green. Public repo:
+Pre-release (`v0.1`, no tag yet). The harness is fully runnable: 20 cases, a
+multi-dimensional scorer with an **independent** FHIR validator (R4B **and R5**),
+terminology verified against official sources, three vendor adapters (current
+models), agentic regime, multi-sample / pass-rate metrics, and a transformation
+axis (family TX: non-FHIR input → FHIR). 78 tests green. Public repo:
 https://github.com/Faridmurzone/fhir-agent-benchmark (subtree split from the
 private `prometheus` monorepo). **No official results published** until the spec
 is frozen at `v0.1.0`.
@@ -28,17 +29,25 @@ shift to measuring **pass-rate / worst-case**, not the mean.
 
 - **Docs:** README, VISION, ROADMAP, CONCEPTUAL_DESIGN, TASK_TAXONOMY, SCORING,
   AGENTIC, DATA_INTEGRITY, METHODOLOGY_LESSONS, PUBLISHING.
-- **Taxonomy:** 6 families, 36 capabilities (28 core), machine-readable
+- **Taxonomy:** 7 families, 41 capabilities (32 core), machine-readable
   `taxonomy/taxonomy.json`. Stable immutable IDs.
 - **Scoring:** CC, FV, SF (multiplicative safety gate + hard cap), TRC, SR, AE.
-  - FV structural validity delegated to **official HL7 R4B models** (`fhir.resources`),
+  - FV structural validity delegated to **official HL7 models** (`fhir.resources`),
+    R4B default y **R5 opcional** (`options.fhir_version`, para migración TX-05);
     heuristic fallback. Layer 7 = US Core conformance (conditional, opt-in).
   - CC entity/flag matching by code OR evidence OR label; generation CC by path
-    assertions; TRC by evidence recall.
+    assertions (`equals` / `equals_any` para coding un-guided); TRC by evidence recall.
   - `scoring/defaults.json` (weights, gate γ, penalties).
-- **Cases (15):** seed 0001; hard 0010–0015 (status traps, dup therapy, recurrence,
+- **Cases (20):** seed 0001; hard 0010–0015 (status traps, dup therapy, recurrence,
   contradiction, implausible value, false-alarm allergy); FG 0020–0023 (Observation,
-  Condition, MedicationRequest, US Core Condition); generated 0900.
+  Condition, MedicationRequest, US Core Condition); **TX 0030–0034** (LIS JSON→
+  Observation un-guided, texto→Condition un-guided, export EHR→Bundle, US Core
+  sin perfil dado, migración R4→R5); generated 0900.
+- **Familia TX (Transformation & Mapping):** mide lo que FG no medía — input
+  NO-FHIR (JSON propietario / texto plano) → FHIR correcto, donde el modelo
+  decide resourceType, mapeo de campos, códigos de memoria (LOINC/SNOMED),
+  vocabulario del vendor (F→final, M→male) y conformidad de IG sin guía.
+  Rendering nuevo `source_json`.
 - **Agentic regime (Phase 4):** `fhir_env.py` (read-only FHIR env + access log),
   `agentic.py` (tools list/search/read/finish, model-agnostic loop, AE scoring with
   safety gate), tasks `agt-0001..0004` (single + multi-hop: eGFR recency,
@@ -53,7 +62,7 @@ shift to measuring **pass-rate / worst-case**, not the mean.
   plus `oracle`/`empty` baselines.
 - **Independent verification:** `scripts/verify_terminology.py` (RxNav / LOINC /
   tx.fhir.org); corrected ~10 RxNorm + 1 SNOMED bad codes.
-- **Tests:** 61 green. **Distribution:** subtree split → public repo, MIT, topics set.
+- **Tests:** 78 green. **Distribution:** subtree split → public repo, MIT, topics set.
 
 ## Experiments run (private, not committed — pre-v0.1.0)
 
@@ -79,12 +88,19 @@ shift to measuring **pass-rate / worst-case**, not the mean.
 3. **Tail characterization:** N=20–50 per case, report p5 / failure-rate by capability.
 4. **Audit `generator/adversarial.py` full catalog** against RxNav (only reused
    codes verified so far; the rest is marked pending in the file).
-5. **US Core un-guided generation:** ask for US Core conformance *without* giving
-   the profile URL/systems — tests whether the model knows US Core from memory.
+5. ~~**US Core un-guided generation**~~ — **DONE** como TX-04 / caso 0033
+   (US Core sin perfil dado, FV capa 7 activa).
 6. **Validate against user's real stack** (model/prompt/context actually used in
    prod) — likely where the real errors live.
 7. **Freeze + tag `v0.1.0`** once the spec is stable, then publish official results
    (only against the tag; results are gitignored until then).
+8. **Correr los 3 vendors sobre la familia TX** (0030–0034, multi-sample): es el
+   eje con más chances de discriminar frontier de verdad (la capacidad atómica
+   está saturada; acá el modelo decide mapeos, códigos de memoria y conformidad
+   de IG sin guía). Verificar los códigos nuevos (2345-7, 2951-2, 2823-3, 2160-0)
+   con `scripts/verify_terminology.py` si el script levanta códigos de casos.
+9. **Extender TX**: más vendors/formatos (CSV, HL7v2-ish), más tipos de recurso,
+   migración R5→R4 (downgrade), otros IGs (IPS).
 
 ## How to resume (commands)
 
@@ -93,8 +109,8 @@ cd fhir-agent-benchmark
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 # secrets live in .env (gitignored): ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY
 set -a; . ./.env; set +a
-.venv/bin/python -m benchmark_runner.cli validate-all          # 15/15
-.venv/bin/python -m pytest -q                                  # 61 green
+.venv/bin/python -m benchmark_runner.cli validate-all          # 20/20
+.venv/bin/python -m pytest -q                                  # 78 green
 .venv/bin/python -m benchmark_runner.cli run --model anthropic:claude-opus-4-8 --samples 3
 .venv/bin/python scripts/verify_terminology.py                 # 0 INVALID (needs network)
 # publish update: git subtree split --prefix=fhir-agent-benchmark -b fhir-agent-benchmark-public

@@ -26,8 +26,12 @@ def available() -> bool:
         return False
 
 
-def validate(resource: dict) -> tuple[bool, list[str]]:
-    """Valida un recurso contra los modelos oficiales FHIR R4B.
+def validate(resource: dict, version: str = "R4") -> tuple[bool, list[str]]:
+    """Valida un recurso contra los modelos oficiales FHIR.
+
+    ``version``: "R4" (modelos R4B, default) o "R5" (modelos top-level de
+    `fhir.resources`, que desde 7.x son R5). Permite scorear tareas de
+    migración R4→R5 (TX-05) con la misma autoridad independiente.
 
     Devuelve (ok, errores). Si la librería no está disponible, devuelve
     (True, ["validator_unavailable"]) para que el caller use su fallback.
@@ -37,13 +41,14 @@ def validate(resource: dict) -> tuple[bool, list[str]]:
     rt = (resource or {}).get("resourceType")
     if not rt:
         return False, ["missing resourceType"]
+    pkg = "fhir.resources" if version == "R5" else "fhir.resources.R4B"
     try:
-        mod = importlib.import_module(f"fhir.resources.R4B.{rt.lower()}")
+        mod = importlib.import_module(f"{pkg}.{rt.lower()}")
     except ModuleNotFoundError:
-        return False, [f"unknown R4 resourceType '{rt}'"]
+        return False, [f"unknown {version} resourceType '{rt}'"]
     cls = getattr(mod, rt, None)
     if cls is None:
-        return False, [f"unknown R4 resourceType '{rt}'"]
+        return False, [f"unknown {version} resourceType '{rt}'"]
     try:
         cls.model_validate(resource)
         return True, []

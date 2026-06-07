@@ -1,0 +1,30 @@
+{
+  "export_type": "patient_chart_extract",
+  "source_system": "ACME-EHR 9.1",
+  "extracted_at": "2026-05-21T08:00:00Z",
+  "patient": {
+    "mrn": "pat-001",
+    "family_name": "Synthetic",
+    "given_name": "Luis",
+    "sex": "M",
+    "dob": "1968-03-14"
+  },
+  "lab_results": [
+    {
+      "test_cd": "NA",
+      "test_desc": "Sodium, serum",
+      "value": "139",
+      "units": "mmol/L",
+      "collected": "2026-05-20",
+      "status": "F"
+    },
+    {
+      "test_cd": "K",
+      "test_desc": "Potassium, serum",
+      "value": "4.1",
+      "units": "mmol/L",
+      "collected": "2026-05-20",
+      "status": "F"
+    }
+  ]
+}

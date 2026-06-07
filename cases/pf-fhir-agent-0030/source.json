@@ -1,0 +1,15 @@
+{
+  "msg_type": "ORU_R01",
+  "sending_app": "ACME-LIS v3.2",
+  "mrn": "pat-001",
+  "visit_id": "enc-001",
+  "panel": "CHEM7",
+  "test_cd": "GLU",
+  "test_desc": "Glucose, serum",
+  "result_value": "105",
+  "result_units": "mg/dL",
+  "ref_range": "70-99",
+  "abnormal_flag": "H",
+  "result_status": "F",
+  "collected_dt": "20260520"
+}

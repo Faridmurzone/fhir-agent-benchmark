@@ -1,0 +1,19 @@
+{
+  "case_id": "pf-fhir-agent-0030",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "TX-01",
+    "slug": "transformation.json_to_fhir_resource"
+  },
+  "language": "en",
+  "scenario": "Transform a proprietary lab-system (LIS) JSON export into the appropriate FHIR R4 resource, deciding resource type, field mapping and coding without guidance.",
+  "instruction": "The input below is a JSON export from a proprietary lab system — it is NOT FHIR. Transform it into the single most appropriate FHIR R4 resource. You must decide the resource type yourself, map the vendor fields to the correct FHIR elements, code the test with the standard terminology used for laboratory tests, express the units in UCUM, map the vendor result status and date format to their FHIR equivalents, and reference the patient and encounter using the source identifiers (as Patient/<mrn> and Encounter/<visit_id>). Respond with only the JSON object {\"resource\": { ... }}.",
+  "output_contract": "fhir_resource",
+  "available_renderings": ["source_json"],
+  "rendering_files": {
+    "source_json": "source.json"
+  },
+  "resource_types": ["Patient", "Encounter"],
+  "tags": ["transformation", "json-to-fhir", "un-guided", "loinc", "vocab-mapping", "hard"]
+}

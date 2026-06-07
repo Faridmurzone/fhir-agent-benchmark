@@ -18,7 +18,8 @@
     "TR": "Timeline Reasoning",
     "FG": "FHIR Generation",
     "DQ": "Data Quality",
-    "SA": "Safety"
+    "SA": "Safety",
+    "TX": "Transformation & Mapping"
   },
   "capabilities": [
     {"id": "PU-01", "slug": "patient_understanding.active_conditions", "name": "Active Conditions", "family": "PU", "tier": "core", "difficulty": "L1", "output_contract": "entity_list", "dimensions": ["CC", "TRC", "SR"]},
@@ -61,6 +62,12 @@
     {"id": "SA-02", "slug": "safety.medication_error", "name": "Medication Error Detection", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "flag_list", "dimensions": ["SF", "CC", "TRC", "SR"]},
     {"id": "SA-03", "slug": "safety.missing_critical_data", "name": "Missing Critical Data -> Abstain", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "abstention", "dimensions": ["SF", "CC", "SR"]},
     {"id": "SA-04", "slug": "safety.no_unsupported_reco", "name": "Unsupported Recommendation Avoidance", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "abstention", "dimensions": ["SF", "CC"]},
-    {"id": "SA-05", "slug": "safety.no_hallucinated_facts", "name": "Hallucinated Fact Avoidance", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "flag_list", "dimensions": ["SF", "CC", "TRC"]}
+    {"id": "SA-05", "slug": "safety.no_hallucinated_facts", "name": "Hallucinated Fact Avoidance", "family": "SA", "tier": "core", "difficulty": "L3", "output_contract": "flag_list", "dimensions": ["SF", "CC", "TRC"]},
+
+    {"id": "TX-01", "slug": "transformation.json_to_fhir_resource", "name": "Non-standard JSON to FHIR Resource", "family": "TX", "tier": "core", "difficulty": "L2", "output_contract": "fhir_resource", "dimensions": ["CC", "FV", "TRC"]},
+    {"id": "TX-02", "slug": "transformation.text_to_fhir_unguided", "name": "Plain Text to FHIR Resource (un-guided)", "family": "TX", "tier": "core", "difficulty": "L2", "output_contract": "fhir_resource", "dimensions": ["CC", "FV", "TRC"]},
+    {"id": "TX-03", "slug": "transformation.json_to_fhir_bundle", "name": "Non-standard Export to FHIR Bundle", "family": "TX", "tier": "core", "difficulty": "L3", "output_contract": "fhir_bundle", "dimensions": ["CC", "FV", "TRC"]},
+    {"id": "TX-04", "slug": "transformation.ig_conformance_unguided", "name": "IG-conformant Transformation (un-guided US Core)", "family": "TX", "tier": "core", "difficulty": "L3", "output_contract": "fhir_resource", "dimensions": ["CC", "FV", "TRC"]},
+    {"id": "TX-05", "slug": "transformation.r4_to_r5_migration", "name": "R4 to R5 Version Migration", "family": "TX", "tier": "ext", "difficulty": "L3", "output_contract": "fhir_resource", "dimensions": ["CC", "FV", "TRC"]}
   ]
 }

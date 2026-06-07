@@ -1,0 +1,19 @@
+{
+  "case_id": "pf-fhir-agent-0031",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "TX-02",
+    "slug": "transformation.text_to_fhir_unguided"
+  },
+  "language": "en",
+  "scenario": "Convert a plain-text clinical note into the FHIR R4 resource that represents the new diagnosis, choosing the resource type and the SNOMED CT code without guidance.",
+  "instruction": "The clinical note below is plain text — not FHIR. Produce the single FHIR R4 resource that best represents the NEW DIAGNOSIS it documents. You must choose the resource type yourself, code the diagnosis with the standard clinical terminology (SNOMED CT) from your own knowledge, set the appropriate clinical and verification statuses, set recordedDate to the date of the note, and reference the patient as Patient/pat-001. Respond with only the JSON object {\"resource\": { ... }}.",
+  "output_contract": "fhir_resource",
+  "available_renderings": ["narrative"],
+  "rendering_files": {
+    "narrative": "narrative.md"
+  },
+  "resource_types": ["Patient"],
+  "tags": ["transformation", "text-to-fhir", "un-guided", "snomed", "hard"]
+}

@@ -1,0 +1,19 @@
+{
+  "case_id": "pf-fhir-agent-0034",
+  "schema_version": "0.1",
+  "taxonomy_version": "0.1",
+  "capability": {
+    "id": "TX-05",
+    "slug": "transformation.r4_to_r5_migration"
+  },
+  "language": "en",
+  "scenario": "Migrate a FHIR R4 MedicationRequest to a valid FHIR R5 MedicationRequest, applying the breaking structural changes of the R5 spec.",
+  "instruction": "The resource below is FHIR R4. Migrate it to a valid FHIR R5 MedicationRequest, applying the structural changes the R5 specification introduced — for example, the R4 choice element medication[x] (medicationCodeableConcept / medicationReference) was replaced in R5 by a single 'medication' element of type CodeableReference. Preserve all clinical content unchanged (codes, status, intent, subject, dates, dosage). Respond with only the JSON object {\"resource\": { ... }}.",
+  "output_contract": "fhir_resource",
+  "available_renderings": ["fhir_json"],
+  "rendering_files": {
+    "fhir_json": "r4_resource.json"
+  },
+  "resource_types": ["Patient"],
+  "tags": ["transformation", "version-migration", "r4-to-r5", "medicationrequest", "hard"]
+}

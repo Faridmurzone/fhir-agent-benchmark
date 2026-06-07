@@ -1,0 +1,114 @@
+{
+  "case_id": "pf-fhir-agent-0032",
+  "capability_id": "TX-03",
+  "output_contract": "fhir_bundle",
+  "expected": {
+    "assertions": [
+      {"path": "resourceType", "equals": "Bundle"},
+      {"path": "type", "equals": "collection"},
+      {"path": "entry[*].resource.resourceType", "equals": "Patient"},
+      {"path": "entry[*].resource.resourceType", "equals": "Observation"},
+      {"path": "entry[*].resource.gender", "equals": "male"},
+      {"path": "entry[*].resource.birthDate", "equals": "1968-03-14"},
+      {"path": "entry[*].resource.code.coding[*].system", "equals": "http://loinc.org"},
+      {"path": "entry[*].resource.code.coding[*].code", "equals": "2951-2"},
+      {"path": "entry[*].resource.code.coding[*].code", "equals": "2823-3"},
+      {"path": "entry[*].resource.subject.reference", "equals": "Patient/pat-001"},
+      {"path": "entry[*].resource.status", "equals": "final"},
+      {"path": "entry[*].resource.valueQuantity.value", "equals": 139},
+      {"path": "entry[*].resource.valueQuantity.value", "equals": 4.1}
+    ],
+    "evidence": ["Patient/pat-001"],
+    "reference_resource": {
+      "resourceType": "Bundle",
+      "id": "bundle-chart-tx",
+      "type": "collection",
+      "entry": [
+        {
+          "fullUrl": "Patient/pat-001",
+          "resource": {
+            "resourceType": "Patient",
+            "id": "pat-001",
+            "name": [{"family": "Synthetic", "given": ["Luis"]}],
+            "gender": "male",
+            "birthDate": "1968-03-14"
+          }
+        },
+        {
+          "fullUrl": "Observation/obs-na",
+          "resource": {
+            "resourceType": "Observation",
+            "id": "obs-na",
+            "status": "final",
+            "category": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "code": "laboratory"
+                  }
+                ]
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "2951-2",
+                  "display": "Sodium [Moles/volume] in Serum or Plasma"
+                }
+              ],
+              "text": "Sodium, serum"
+            },
+            "subject": {"reference": "Patient/pat-001"},
+            "effectiveDateTime": "2026-05-20",
+            "valueQuantity": {
+              "value": 139,
+              "unit": "mmol/L",
+              "system": "http://unitsofmeasure.org",
+              "code": "mmol/L"
+            }
+          }
+        },
+        {
+          "fullUrl": "Observation/obs-k",
+          "resource": {
+            "resourceType": "Observation",
+            "id": "obs-k",
+            "status": "final",
+            "category": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "code": "laboratory"
+                  }
+                ]
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "2823-3",
+                  "display": "Potassium [Moles/volume] in Serum or Plasma"
+                }
+              ],
+              "text": "Potassium, serum"
+            },
+            "subject": {"reference": "Patient/pat-001"},
+            "effectiveDateTime": "2026-05-20",
+            "valueQuantity": {
+              "value": 4.1,
+              "unit": "mmol/L",
+              "system": "http://unitsofmeasure.org",
+              "code": "mmol/L"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "safety_events": [],
+  "notes": "TX-03: export propietario -> Bundle multi-recurso. Mide composición: identificar que hacen falta Patient + 2 Observation, mapear demografía (sex M -> gender male, dob -> birthDate), LOINC de memoria (sodio serum moles/vol -> 2951-2, potasio -> 2823-3, forzados por mmol/L), y consistencia referencial interna (subject -> Patient/pat-001 del propio bundle; FV capa 6 la verifica). Los ids de Observation NO se asertan (cualquier id es válido)."
+}

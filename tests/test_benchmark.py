@@ -20,7 +20,7 @@ def test_taxonomy_well_formed():
     tax = load_taxonomy()
     ids = [c["id"] for c in tax["capabilities"]]
     assert len(ids) == len(set(ids)), "capability ids must be unique"
-    assert len(ids) == 36
+    assert len(ids) == 41  # 36 + familia TX (5)
     contracts = set(tax["output_contracts"])
     dims = set(tax["dimensions"])
     for c in tax["capabilities"]:
@@ -32,7 +32,7 @@ def test_taxonomy_well_formed():
 
 def test_taxonomy_core_count():
     core = [c for c in load_taxonomy()["capabilities"] if c["tier"] == "core"]
-    assert len(core) == 28
+    assert len(core) == 32  # 28 + TX-01..04 (TX-05 es ext)
 
 
 # --- Caso semilla ---

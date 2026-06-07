@@ -1,0 +1,18 @@
+{
+  "resourceType": "MedicationRequest",
+  "id": "medrx-r4-001",
+  "status": "active",
+  "intent": "order",
+  "medicationCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "314076",
+        "display": "lisinopril 10 MG Oral Tablet"
+      }
+    ]
+  },
+  "subject": {"reference": "Patient/pat-001"},
+  "authoredOn": "2026-05-20",
+  "dosageInstruction": [{"text": "10 mg orally once daily"}]
+}

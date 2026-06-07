@@ -29,12 +29,13 @@ _CONTRACT_SPEC = {
         '{"abstained": true|false, "answer": <answer or null>, '
         '"reason": "...", "missing": ["..."]}'
     ),
-    "fhir_resource": '{"resource": { ...recurso FHIR R4 válido... }}',
+    "fhir_resource": '{"resource": { ...recurso FHIR válido (R4 salvo que la instrucción pida otra versión)... }}',
     "fhir_bundle": '{"resource": { "resourceType": "Bundle", ... }}',
 }
 
 _SYSTEM = (
-    "You are a clinical data agent operating over HL7 FHIR R4 resources. "
+    "You are a clinical data agent operating over HL7 FHIR resources "
+    "(R4 unless the task specifies another version). "
     "Answer strictly from the data provided. Cite source resources as evidence "
     "using \"ResourceType/id\" references. Do not invent clinical facts. "
     "If the data is insufficient to answer safely, say so."

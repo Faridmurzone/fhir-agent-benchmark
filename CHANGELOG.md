@@ -9,6 +9,30 @@ IDs are immutable across versions.
 ## [Unreleased]
 
 ### Added
+- **Family TX — Transformation & Mapping** (5 capabilities, TX-01..05): the
+  benchmark now measures the dominant real-world integration task — turning
+  **non-FHIR input** into correct FHIR — which FG deliberately did not (FG
+  instructions dictate resource type, codes and values; TX withholds them).
+  Cases `0030`–`0034`: `0030` (TX-01, proprietary LIS JSON → Observation,
+  un-guided: resource-type identification, LOINC from memory forced by units,
+  vendor vocab mapping F→final, date format conversion), `0031` (TX-02,
+  plain-text note → Condition, SNOMED from memory), `0032` (TX-03, EHR chart
+  extract → multi-resource Bundle with internal referential consistency),
+  `0033` (TX-04, US Core conformance **without** being given the profile URL,
+  category system or bindings — tests IG knowledge from memory), `0034` (TX-05,
+  R4→R5 MedicationRequest migration: `medication[x]` → CodeableReference).
+- **FV per-version validation**: `scoring.json` option `fhir_version: R4|R5`;
+  `fhir_validate.validate(resource, version=...)` validates against the official
+  R4B or R5 models. Verified discriminative: an un-migrated R4 shape fails R5
+  validation and vice versa.
+- **`equals_any` assertions** in generation ground truth: for un-guided coding
+  tasks where more than one code is defensible (e.g. essential hypertension
+  59621000 vs hypertensive disorder 38341003), asserting a single `equals`
+  would fabricate failures (METHODOLOGY_LESSONS §3).
+- New rendering `source_json` (non-FHIR vendor input) in `task.schema.json`.
+- 17 new tests (`tests/test_transformation.py`): case validity, oracle ceiling,
+  equals_any semantics, vendor-status leak detection, R4/R5 discrimination,
+  un-guided US Core profile declaration, multi-wildcard bundle assertions.
 - **Multi-sample runs** (`run_model(n_samples=N)`, `run_case_sampled`): each case
   is run N times and the scorecard reports overall mean / std / min / max. Needed
   because models (especially fast tiers) are non-deterministic — a single run is

@@ -1,0 +1,62 @@
+{
+  "case_id": "pf-fhir-agent-0033",
+  "capability_id": "TX-04",
+  "output_contract": "fhir_resource",
+  "expected": {
+    "assertions": [
+      {"path": "resourceType", "equals": "Observation"},
+      {"path": "meta.profile[*]", "equals": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab"},
+      {"path": "status", "equals": "final"},
+      {"path": "category[*].coding[*].system", "equals": "http://terminology.hl7.org/CodeSystem/observation-category"},
+      {"path": "category[*].coding[*].code", "equals": "laboratory"},
+      {"path": "code.coding[*].system", "equals": "http://loinc.org"},
+      {"path": "code.coding[*].code", "equals": "2160-0"},
+      {"path": "subject.reference", "equals": "Patient/pat-001"},
+      {"path": "effectiveDateTime", "equals": "2026-05-20"},
+      {"path": "valueQuantity.value", "equals": 1.1},
+      {"path": "valueQuantity.code", "equals": "mg/dL"}
+    ],
+    "evidence": ["Patient/pat-001", "Encounter/enc-001"],
+    "reference_resource": {
+      "resourceType": "Observation",
+      "id": "obs-crea-uscore",
+      "meta": {
+        "profile": [
+          "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab"
+        ]
+      },
+      "status": "final",
+      "category": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+              "code": "laboratory"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2160-0",
+            "display": "Creatinine [Mass/volume] in Serum or Plasma"
+          }
+        ],
+        "text": "Creatinine, serum"
+      },
+      "subject": {"reference": "Patient/pat-001"},
+      "encounter": {"reference": "Encounter/enc-001"},
+      "effectiveDateTime": "2026-05-20",
+      "valueQuantity": {
+        "value": 1.1,
+        "unit": "mg/dL",
+        "system": "http://unitsofmeasure.org",
+        "code": "mg/dL"
+      }
+    }
+  },
+  "safety_events": [],
+  "notes": "TX-04: conformidad US Core SIN dar el perfil (resuelve el eje 'US Core un-guided' del roadmap). A diferencia de FG-02/0023 (que dicta URL, category y system en la instrucción), acá el modelo debe conocer de memoria: la URL canónica us-core-observation-lab, la category laboratory con su system, y los must-support. FV corre con capa 7 activa (options.profile=us-core). LOINC creatinina serum mass/vol -> 2160-0, forzado por mg/dL."
+}
