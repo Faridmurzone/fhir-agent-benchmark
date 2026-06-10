@@ -5,6 +5,54 @@ workflows** — structured clinical reasoning, medication reconciliation, resour
 generation, data-quality detection, safety evaluation, and serialization
 robustness.
 
+## 📊 Preliminary results
+
+> ⚠️ **Preliminary, pre-`v0.1.0`.** The spec is not frozen yet, so these numbers
+> are exploratory and **not official**. Official results will only be published
+> against a tagged release — see
+> [Stability & versioning](#stability--versioning).
+
+Sweep of **2026-06-07** · 20 cases (including the new **TX** transformation
+family) · **3 samples per case** · scoring `v0.1`.
+
+| Model | Mean | Pass % | Worst | σ | CC | FV | SF | TRC | SR | TX |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| **Anthropic (Claude)** | | | | | | | | | | |
+| Claude Opus 4.8 | 99 | 93 | 71 | 1 | 100 | 100 | 100 | 100 | 100 | 98 |
+| Claude Opus 4.6 | 99 | 93 | 79 | 0 | 100 | 100 | 100 | 100 | 97 | 100 |
+| Claude Opus 4.1 | 100 | 95 | 90 | 0 | 100 | 100 | 100 | 100 | 100 | 100 |
+| Claude Sonnet 4.6 | 99 | 90 | 80 | 0 | 100 | 100 | 99 | 99 | 100 | 100 |
+| Claude Haiku 4.5 | 96 | 82 | 51 | 1 | 98 | 91 | 99 | 90 | 97 | 88 |
+| **Google (Gemini)** | | | | | | | | | | |
+| Gemini 3.5 Flash | 97 | 93 | 0 | 4 | 95 | 88 | 100 | 90 | 100 | 87 |
+| Gemini 3.1 Pro (preview) | 100 | 100 | 100 | 0 | 100 | 100 | 100 | 100 | 100 | 100 |
+| Gemini 2.5 Pro | 99 | 95 | 69 | 1 | 100 | 91 | 100 | 100 | 100 | 99 |
+| Gemini 2.5 Flash | 95 | 82 | 61 | 5 | 96 | 100 | 100 | 82 | 82 | 92 |
+| **OpenAI (GPT)** | | | | | | | | | | |
+| GPT-5.5 | 99 | 92 | 61 | 1 | 100 | 100 | 100 | 100 | 100 | 100 |
+| GPT-5 | 99 | 92 | 90 | 0 | 100 | 100 | 100 | 100 | 100 | 100 |
+| GPT-4.1 | 99 | 97 | 72 | 1 | 100 | 100 | 100 | 100 | 100 | 98 |
+| GPT-4o | 97 | 92 | 43 | 1 | 98 | 91 | 100 | 90 | 100 | 87 |
+
+**How to read it.** **Mean** = mean overall score across cases and samples ·
+**Pass %** = share of cases at or above the pass threshold · **Worst** = worst
+single case across samples · **σ** = standard deviation of the overall score ·
+**CC** clinical correctness · **FV** FHIR validity · **SF** safety · **TRC**
+traceability · **SR** serialization robustness · **TX** = overall score on the
+transformation family (non-FHIR input → FHIR).
+
+Three takeaways:
+
+- **Atomic capabilities are saturated.** On the classic families nearly every
+  frontier model scores ~100 — the signal is no longer there.
+- **The TX (transformation) family discriminates.** TX-05 (R4→R5 migration) is
+  the strongest discriminator: GPT-4o fails it consistently (it doesn't migrate
+  `medication[x]` → `CodeableReference`), while current frontier models pass.
+  TX-04 (US Core without being given the profile) hits the flash-tier models.
+- **Variance matters.** Flash-tier models are noisy (Gemini 3.5 Flash has a
+  worst case of 0); Pro/Opus/GPT-5-class models are stable (σ≈0). That's why we
+  report the mean of 3 samples plus a pass rate — never a single run.
+
 > **Status:** early design phase (`v0.1`). In place and runnable: the taxonomy,
 > scoring methodology, JSON schemas, a multi-dimensional **scoring engine**, a
 > deterministic **synthetic case generator**, **5 validated seed cases** across
@@ -14,8 +62,9 @@ robustness.
 > discussion are welcome.
 >
 > ⚠️ **Pre-release.** The spec (taxonomy, scoring, schemas, cases) may change
-> until the first tagged release `v0.1.0`. No official results are published yet
-> — see [Stability & versioning](#stability--versioning).
+> until the first tagged release `v0.1.0`. The results above are preliminary —
+> no official results are published until the spec is frozen at a tag; see
+> [Stability & versioning](#stability--versioning).
 
 Part of **Prometheus Frontier** — building open, reproducible, vendor-neutral
 evaluation for healthcare AI.
@@ -220,8 +269,10 @@ explicit and disciplined:
   `scoring_version` (see [`CHANGELOG.md`](CHANGELOG.md)); cross-version
   comparisons always state both.
 - **Official results only against tags.** No leaderboard or official model
-  results are published until the spec is frozen at a tagged release. Results are
-  always tied to a specific tag — never to a moving `main`.
+  results are published until the spec is frozen at a tagged release. Clearly
+  labeled **preliminary** numbers (like the table at the top of this README) may
+  be shared for discussion, but official results are always tied to a specific
+  tag — never to a moving `main`.
 
 In short: the **design** is public (and evolving with community feedback); the
 **numbers** wait until the spec is frozen.
